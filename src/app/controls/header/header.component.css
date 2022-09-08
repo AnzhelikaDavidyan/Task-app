@@ -1,0 +1,42 @@
+section {
+    display: flex;
+}
+
+section>* {
+    flex: 1;
+    margin-right: 20px;
+}
+
+button:hover {
+    background-color: aliceblue;
+    color: slategrey;
+}
+
+
+nav ul {
+    list-style-type: none;
+}
+
+nav ul li {
+    float: left;
+    margin-right: 0.5em;
+}
+
+nav ul li a {
+    padding: 0.25em 1em;
+    text-decoration: none;
+    background-color: #EBF5FF;
+    color: #fff;
+    border: 2px solid;
+    border-top-left-radius: 1em 1em;
+    /* rounded corner! */
+    border-top-right-radius: 1em 1em;
+    /* another rounded corner! */
+}
+
+nav ul li a:hover,
+nav ul li a:focus {
+    color: black;
+    background-color: white;
+    font-weight: bold;
+}
