@@ -97,6 +97,7 @@ export class BooksTableComponent implements OnInit {
   }
 
 }
+
 function of(arg0: boolean): Observable<boolean> {
   throw new Error('Function not implemented.');
 }
