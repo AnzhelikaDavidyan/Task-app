@@ -7,7 +7,8 @@
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
-    "run:server": "json-server --watch ./server/db.json"
+    "start:server": "json-server --watch ./server/db.json",
+    "ci:build": "npx rimraf package-lock.json && npm i"
   },
   "private": true,
   "dependencies": {

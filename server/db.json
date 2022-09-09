@@ -21,49 +21,56 @@
       "title": "It Ends with Us",
       "genreId": 1,
       "publishedYear": 2016,
-      "authorIds": [4, 5]
+      "authorId": 4
     },
     {
       "id": 2,
       "title": "Jane Eyre",
       "publishedYear": 1997,
-      "genreId": 1
+      "genreId": 1,
+      "authorId": 4
     },
     {
       "id": 3,
       "title": "Hamlet",
       "publishedYear": 1997,
-      "genreId": 2
+      "genreId": 2,
+      "authorId": 4
     },
     {
       "id": 4,
       "title": "Julius Caesar",
       "publishedYear": 1997,
-      "genreId": 2
+      "genreId": 2,
+      "authorId": 4
     },
     {
       "id": 5,
       "title": "A Game of Thrones",
       "publishedYear": 1997,
-      "genreId": 3
+      "genreId": 3,
+      "authorId": 4
     },
     {
       "id": 6,
       "title": "Harry Potter and the Philosopher's Stone",
       "publishedYear": 1997,
-      "genreId": 3
+      "genreId": 3,
+      "authorId": 4
     },
     {
       "id": 7,
       "title": "Dracula",
       "publishedYear": 1897,
-      "genreId": 4
+      "genreId": 4,
+      "authorId": 4
     },
     {
       "id": 8,
       "title": "Frankenstein",
       "publishedYear": 1818,
-      "genreId": 4
+      "genreId": 4,
+      "authorId": 4
     }
   ],
 
