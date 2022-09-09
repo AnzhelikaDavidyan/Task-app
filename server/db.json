@@ -1,0 +1,102 @@
+{
+  "genres": [{
+      "id": 1,
+      "name": "fiction"
+    },
+    {
+      "id": 2,
+      "name": "drama"
+    },
+    {
+      "id": 3,
+      "name": "fantasy"
+    },
+    {
+      "id": 4,
+      "name": "horror"
+    }
+  ],
+  "books": [{
+      "id": 1,
+      "title": "It Ends with Us",
+      "genreId": 1,
+      "publishedYear": 2016,
+      "authorIds": [4, 5]
+    },
+    {
+      "id": 2,
+      "title": "Jane Eyre",
+      "publishedYear": 1997,
+      "genreId": 1
+    },
+    {
+      "id": 3,
+      "title": "Hamlet",
+      "publishedYear": 1997,
+      "genreId": 2
+    },
+    {
+      "id": 4,
+      "title": "Julius Caesar",
+      "publishedYear": 1997,
+      "genreId": 2
+    },
+    {
+      "id": 5,
+      "title": "A Game of Thrones",
+      "publishedYear": 1997,
+      "genreId": 3
+    },
+    {
+      "id": 6,
+      "title": "Harry Potter and the Philosopher's Stone",
+      "publishedYear": 1997,
+      "genreId": 3
+    },
+    {
+      "id": 7,
+      "title": "Dracula",
+      "publishedYear": 1897,
+      "genreId": 4
+    },
+    {
+      "id": 8,
+      "title": "Frankenstein",
+      "publishedYear": 1818,
+      "genreId": 4
+    }
+  ],
+
+  "authors": [{
+      "id": 1,
+      "firstName": "Mary",
+      "lastName": "Shelley",
+      "genreId": 4
+    },
+    {
+      "id": 2,
+      "firstName": "Bram",
+      "lastName": "Stoker",
+      "genreId": 4
+    },
+    {
+      "id": 3,
+      "firstName": "J. K. ",
+      "lastName": "Rowling",
+      "genreId": 3
+    },
+    {
+      "id": 4,
+      "firstName": "Colleen",
+      "lastName": " Hoover",
+      "genreId": 1
+    },
+    {
+      "id": 5,
+      "firstName": "Colleen",
+      "lastName": " Hoover 2",
+      "genreId": 1
+    }
+
+  ]
+}
