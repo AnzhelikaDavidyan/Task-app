@@ -1,11 +1,50 @@
-<p>books-popup works!</p>
-<h1 mat-dialog-title>Message</h1>
-<mat-dialog-content> 
-    <div>
-        dsfsdf
-    </div>
+<h1 mat-dialog-title>Add New Book</h1>
+<mat-dialog-content>
+    <section>
+        <form [formGroup]="bookDetailForm">
+            <mat-form-field appearance="outline">
+                <mat-label>Title</mat-label>
+                <input matInput formControlName="title">
+                <mat-error>Title is required.</mat-error>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+                <mat-label>Published Year</mat-label>
+                <input matInput formControlName="publishedYear">
+                <mat-error>Published Year is required.</mat-error>
+            </mat-form-field>
+
+            <!-- <app-combo-box formControlName="genreId"
+             [label]="'Genre'" 
+             [errorMessages]="['Genre is required.']"
+             [form]="bookDetailForm">
+
+            </app-combo-box> -->
+            <mat-form-field appearance="outline">
+                <mat-label>Genre</mat-label>
+                <mat-select formControlName="genreId">
+                    <mat-option *ngFor="let genre of genres$ | async" [value]="genre">
+                        {{genre.name}}
+                    </mat-option>
+                </mat-select>
+                <mat-error>Genre is required.</mat-error>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+                <mat-label>Author</mat-label>
+                <mat-select formControlName="authorId">
+                    <mat-option *ngFor="let author of filteredAuthors$ | async" [value]="author">
+                        {{author.firstName}}
+                    </mat-option>
+                </mat-select>
+                <mat-error>Author is required.</mat-error>
+            </mat-form-field>
+        </form>
+
+    </section>
 </mat-dialog-content>
 <mat-dialog-actions align="end">
     <button mat-button mat-dialog-close>Cancel</button>
-    <button mat-button [mat-dialog-close]="true" cdkFocusInitial>Install</button>
+    <button mat-button [mat-dialog-close]="true" cdkFocusInitial (click)="onSave()"
+        [disabled]="!bookDetailForm.valid">Save</button>
 </mat-dialog-actions>

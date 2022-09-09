@@ -1,12 +1,14 @@
 import { NgModule } from "@angular/core";
 
 import { MatButtonModule } from '@angular/material/button';
-import { MatFormFieldModule } from "@angular/material/form-field";
-import { MatPaginatorModule } from "@angular/material/paginator";
-import { MatTableModule } from '@angular/material/table';
+import { MatCardModule } from '@angular/material/card';
 import { MatDialogModule } from '@angular/material/dialog';
+import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatIconModule } from '@angular/material/icon';
-
+import { MatInputModule } from '@angular/material/input';
+import { MatPaginatorModule } from "@angular/material/paginator";
+import { MatSelectModule } from '@angular/material/select';
+import { MatTableModule } from '@angular/material/table';
 @NgModule({
     imports: [
         MatButtonModule,
@@ -14,7 +16,10 @@ import { MatIconModule } from '@angular/material/icon';
         MatFormFieldModule,
         MatPaginatorModule,
         MatDialogModule,
-        MatIconModule
+        MatIconModule,
+        MatCardModule,
+        MatSelectModule,
+        MatInputModule
     ],
     exports: [
         MatButtonModule,
@@ -22,7 +27,10 @@ import { MatIconModule } from '@angular/material/icon';
         MatFormFieldModule,
         MatPaginatorModule,
         MatDialogModule,
-        MatIconModule
+        MatIconModule,
+        MatCardModule,
+        MatSelectModule,
+        MatInputModule
     ],
 })
 export class MaterialModule { }

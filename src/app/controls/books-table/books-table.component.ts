@@ -3,7 +3,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTable, MatTableDataSource } from '@angular/material/table';
-import { map, noop, Observable, of, Subject, takeUntil } from 'rxjs';
+import { map, Observable, of, Subject, takeUntil } from 'rxjs';
 import { DeletePopupComponent } from '../shared/delete-popup/delete-popup.component';
 import { BooksPopupComponent } from './books-popup/books-popup.component';
 import { BookModel } from './model/book.model';
