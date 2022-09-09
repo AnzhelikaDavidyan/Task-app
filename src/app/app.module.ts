@@ -8,6 +8,7 @@ import { AppComponent } from './app.component';
 import { BooksPopupComponent } from './controls/books-table/books-popup/books-popup.component';
 import { BooksTableComponent } from './controls/books-table/books-table.component';
 import { HeaderComponent } from './controls/header/header.component';
+import { SharedModule } from './controls/shared/shared.module';
 import { MaterialModule } from './material.module';
 
 @NgModule({
@@ -22,7 +23,8 @@ import { MaterialModule } from './material.module';
     HttpClientModule,
     AppRoutingModule,
     MaterialModule,
-    BrowserAnimationsModule
+    BrowserAnimationsModule,
+    SharedModule
   ],
   providers: [],
   entryComponents: [BooksPopupComponent],

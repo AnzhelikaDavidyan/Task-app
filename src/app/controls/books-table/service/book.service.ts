@@ -12,7 +12,7 @@ export class BookService {
     }
 
     public getBooks(): Observable<BookModel[]> {
-        return this.httpClient.get<BookModel[]>('http://localhost:3000/books').pipe(
+        return this.httpClient.get<BookModel[]>(`http://localhost:3000/books`).pipe(
             map((data: BookModel[]) => {
                 const books: BookModel[] = [];
                 data.forEach((item: BookModel) => {
@@ -22,5 +22,10 @@ export class BookService {
                 return books;
             })
         )
+    }
+
+
+    public removeBook(book: BookModel): Observable<Object> {
+        return this.httpClient.delete(`http://localhost:3000/books/${book.id}`)
     }
 }
