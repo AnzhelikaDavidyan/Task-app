@@ -3,7 +3,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTable, MatTableDataSource } from '@angular/material/table';
-import { map, noop, Observable, Subject, takeUntil } from 'rxjs';
+import { map, noop, Observable, of, Subject, takeUntil } from 'rxjs';
 import { DeletePopupComponent } from '../shared/delete-popup/delete-popup.component';
 import { BooksPopupComponent } from './books-popup/books-popup.component';
 import { BookModel } from './model/book.model';
@@ -97,8 +97,3 @@ export class BooksTableComponent implements OnInit {
   }
 
 }
-
-function of(arg0: boolean): Observable<boolean> {
-  throw new Error('Function not implemented.');
-}
-
