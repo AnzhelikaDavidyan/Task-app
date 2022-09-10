@@ -1,5 +1,6 @@
 import {Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges} from '@angular/core';
 import {EntityModel} from "../../model/entity.model";
+import {FormControl, FormGroup, FormGroupDirective} from "@angular/forms";
 
 @Component({
     selector: 'app-combo-box',
@@ -15,8 +16,8 @@ export class ComboBoxComponent implements OnInit, OnChanges {
 
     @Output() onModelChange = new EventEmitter<any>();
 
-    constructor() {
 
+    constructor(private rootFormGroup: FormGroupDirective) {
     }
 
     ngOnChanges(changes: SimpleChanges): void {
@@ -26,6 +27,7 @@ export class ComboBoxComponent implements OnInit, OnChanges {
     }
 
     ngOnInit(): void {
+
     }
 
     public onComboChange(model: EntityModel) {

@@ -3,13 +3,15 @@ import {MatDialog} from '@angular/material/dialog';
 import {MatPaginator} from '@angular/material/paginator';
 import {MatSort} from '@angular/material/sort';
 import {MatTable, MatTableDataSource} from '@angular/material/table';
-import {map, Observable, of, Subject, takeUntil} from 'rxjs';
+import {map, Observable, of, Subject, takeUntil, zip} from 'rxjs';
 import {DeletePopupComponent} from '../shared/delete-popup/delete-popup.component';
 import {BooksPopupComponent} from './books-popup/books-popup.component';
 import {BookModel} from './model/book.model';
 import {CrudService} from "../services/crud.service";
-import {URLS} from "../util/url";
-import {MenuItem} from "../util/menu.enum";
+import {AUTHORS_URL, BOOKS_URL, GENRES_URL} from "../util/url";
+import {DataCommunicationService} from "../services/data-communication.service";
+import {GenreModel} from "../genres-table/model/genre.model";
+import {AuthorModel} from "../authors-table/model/author.model";
 
 @Component({
     selector: 'app-books-table',
@@ -19,40 +21,44 @@ import {MenuItem} from "../util/menu.enum";
 export class BooksTableComponent implements OnInit {
 
     private destroy$ = new Subject();
-
     public dataSource: MatTableDataSource<BookModel> = new MatTableDataSource();
     public displayedColumns: string[] = ['id', 'title', 'actions'];
-    public isReady: boolean = false;
-
     @ViewChild(MatPaginator) paginator: MatPaginator | undefined;
     @ViewChild(MatSort) sort: MatSort | undefined;
 
-    @ViewChild(MatTable)
-    table!: MatTable<any>;
+    @ViewChild(MatTable) table!: MatTable<any>;
 
     constructor(
         private crudService: CrudService,
+        private dataCommunicationService: DataCommunicationService,
         public dialog: MatDialog) {
 
-        this.crudService.getList(URLS.get(MenuItem.BOOKS) as string)
-            .pipe(
-                map((list: any[]) => {
-                    const books: BookModel[] = [];
-                    list.forEach((item) => {
-                        books.push(new BookModel(item.id, item.title, item.genreId, item.publishYear, item.authorId))
-                    });
-                    return books;
-                }),
-                takeUntil(this.destroy$)
-            )
+        this.getBooks()
             .subscribe(data => {
-                this.isReady = true;
                 this.dataSource = new MatTableDataSource(data);
             });
     }
 
-    ngOnInit(): void {
+    private getBooks(): Observable<BookModel[]> {
+        return this.crudService.getList(BOOKS_URL)
+            .pipe(
+                map((list: any[]) => {
+                    const books: BookModel[] = [];
+                    list.forEach((item) => {
+                        books.push(new BookModel(item.id, item.title, item.genreId, item.publishedYear, item.authorId))
+                    });
+                    return books;
+                }),
+                takeUntil(this.destroy$)
+            );
+    }
 
+    ngOnInit(): void {
+        this.dataCommunicationService.getNotifier().subscribe({
+            next: () => {
+                this.table.renderRows();
+            }
+        })
     }
 
     applyFilter(event: Event) {
@@ -65,27 +71,42 @@ export class BooksTableComponent implements OnInit {
     }
 
     public addBook() {
-        const dialogRef = this.dialog.open(BooksPopupComponent);
-        dialogRef.afterClosed().subscribe(result => {
-            if (result) {
-                this.table.renderRows();
+        const dialogRef = this.dialog.open(BooksPopupComponent, {
+            data: {
+                table: this.table,
+                isNew: true,
+                data: null,
+                title: 'Add Book'
             }
         });
     }
 
     public editBook(event: MouseEvent, model: BookModel) {
-        const dialogRef = this.dialog.open(BooksPopupComponent, {
-            data: {
-                model,
-                list: this.dataSource.data,
-                table: this.table
+        const genre$ = this.crudService.getItemById(GENRES_URL, 'id', +model.genreId);
+        const author$ = this.crudService.getItemById(AUTHORS_URL, 'id', +model.authorId);
+        const model$ = zip(genre$, author$).pipe(
+            map(([genre, author]: [GenreModel[], AuthorModel[]]) => {
+                model.genreId = genre[0];
+                model.authorId = author[0];
+                return model;
+            })
+        ).subscribe({
+            next: (model: BookModel) => {
+                const dialogRef = this.dialog.open(BooksPopupComponent, {
+                    data: {
+                        model,
+                        list: this.dataSource.data,
+                        table: this.table,
+                        title: 'Edit Book'
+                    },
+                    disableClose: true,
+                    autoFocus: false,
+                    width: '400px',
+                    height: 'auto'
+                });
             }
         });
-        dialogRef.afterClosed().subscribe(result => {
-            if (result) {
-                this.table.renderRows();
-            }
-        });
+
     }
 
     public deleteBook(book: BookModel) {
@@ -110,7 +131,7 @@ export class BooksTableComponent implements OnInit {
         const index = data.indexOf(book);
         if (index > -1) {
             this.dataSource.data.splice(index, 1);
-            return this.crudService.removeItem(URLS.get(MenuItem.BOOKS) as string, book).pipe(
+            return this.crudService.removeItem(BOOKS_URL, book).pipe(
                 map(() => true)
             );
         }

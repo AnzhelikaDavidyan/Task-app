@@ -19,13 +19,6 @@
   ],
   "books": [
     {
-      "id": 1,
-      "title": "It Ends with Us",
-      "genreId": 1,
-      "publishedYear": 2016,
-      "authorId": 4
-    },
-    {
       "id": 2,
       "title": "Jane Eyre",
       "publishedYear": 1997,
@@ -76,11 +69,11 @@
     },
     {
       "id": 9,
-      "name": "test",
-      "title": "test",
-      "genreId": 4,
-      "publishedYear": "2020",
-      "authorId": 1
+      "name": "asd",
+      "title": "asd",
+      "genreId": 1,
+      "publishedYear": "2311",
+      "authorId": 4
     }
   ],
   "authors": [
