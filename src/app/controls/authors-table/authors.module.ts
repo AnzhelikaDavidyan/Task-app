@@ -1,7 +1,7 @@
-import { CommonModule } from "@angular/common";
-import { NgModule } from "@angular/core";
-import { AuthorRoutingModule } from "./authors-routing.module";
-import { AuthorsTableComponent } from "./authors-table.component";
+import {CommonModule} from "@angular/common";
+import {NgModule} from "@angular/core";
+import {AuthorRoutingModule} from "./authors-routing.module";
+import {AuthorsTableComponent} from "./authors-table.component";
 
 @NgModule({
     imports: [
@@ -11,4 +11,5 @@ import { AuthorsTableComponent } from "./authors-table.component";
     declarations: [AuthorsTableComponent],
     exports: [AuthorsTableComponent]
 })
-export class AuthorsModule { }
+export class AuthorsModule {
+}

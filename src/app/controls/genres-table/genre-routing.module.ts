@@ -1,6 +1,6 @@
-import { NgModule } from '@angular/core';
-import { Routes, RouterModule } from '@angular/router';
-import { GenresTableComponent } from './genres-table.component';
+import {NgModule} from '@angular/core';
+import {Routes, RouterModule} from '@angular/router';
+import {GenresTableComponent} from './genres-table.component';
 
 
 const routes: Routes = [

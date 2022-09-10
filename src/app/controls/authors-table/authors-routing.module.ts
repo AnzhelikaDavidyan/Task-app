@@ -1,6 +1,6 @@
-import { NgModule } from '@angular/core';
-import { Routes, RouterModule } from '@angular/router';
-import { AuthorsTableComponent } from './authors-table.component';
+import {NgModule} from '@angular/core';
+import {Routes, RouterModule} from '@angular/router';
+import {AuthorsTableComponent} from './authors-table.component';
 
 
 const routes: Routes = [

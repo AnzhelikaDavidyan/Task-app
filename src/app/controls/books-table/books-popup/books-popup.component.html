@@ -14,12 +14,22 @@
                 <mat-error>Published Year is required.</mat-error>
             </mat-form-field>
 
-            <!-- <app-combo-box formControlName="genreId"
-             [label]="'Genre'" 
-             [errorMessages]="['Genre is required.']"
-             [form]="bookDetailForm">
+            <!--            <app-combo-box-->
+            <!--                formControlName="genreId"-->
+            <!--                [label]="'Genre'"-->
+            <!--                [list]="genres$ | async"-->
+            <!--                [errorMessages]="['Genre is required.']"-->
+            <!--                [form]="bookDetailForm">-->
+            <!--            </app-combo-box>-->
 
-            </app-combo-box> -->
+            <!--            <app-combo-box-->
+            <!--                formControlName="authorId"-->
+            <!--                [label]="'Author'"-->
+            <!--                [list]="filteredAuthors$ | async"-->
+            <!--                [errorMessages]="['Author is required.']"-->
+            <!--                [form]="bookDetailForm">-->
+            <!--            </app-combo-box>-->
+
             <mat-form-field appearance="outline">
                 <mat-label>Genre</mat-label>
                 <mat-select formControlName="genreId">
@@ -46,5 +56,6 @@
 <mat-dialog-actions align="end">
     <button mat-button mat-dialog-close>Cancel</button>
     <button mat-button [mat-dialog-close]="true" cdkFocusInitial (click)="onSave()"
-        [disabled]="!bookDetailForm.valid">Save</button>
+            [disabled]="!bookDetailForm.valid">Save
+    </button>
 </mat-dialog-actions>

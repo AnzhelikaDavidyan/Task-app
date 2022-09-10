@@ -1,21 +1,21 @@
-import { HttpClientModule } from '@angular/common/http';
-import { NgModule } from '@angular/core';
-import { BrowserModule } from '@angular/platform-browser';
+import {NgModule} from '@angular/core';
+import {MaterialModule} from 'src/app/material.module';
+import {DeletePopupComponent} from './delete-popup/delete-popup.component';
+import {ComboBoxComponent} from './combo-box/combo-box.component';
+import {CommonModule} from "@angular/common";
 
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { MaterialModule } from 'src/app/material.module';
-import { DeletePopupComponent } from './delete-popup/delete-popup.component';
-import { ComboBoxComponent } from './combo-box/combo-box.component';
 @NgModule({
     declarations: [
         DeletePopupComponent,
         ComboBoxComponent
     ],
     imports: [
-        MaterialModule
+        MaterialModule,
+        CommonModule
     ],
     providers: [],
     entryComponents: [DeletePopupComponent],
     exports: [DeletePopupComponent, ComboBoxComponent]
 })
-export class SharedModule { }
+export class SharedModule {
+}

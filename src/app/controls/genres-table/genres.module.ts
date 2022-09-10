@@ -1,7 +1,7 @@
-import { CommonModule } from "@angular/common";
-import { NgModule } from "@angular/core";
-import { GenreRoutingModule } from "./genre-routing.module";
-import { GenresTableComponent } from "./genres-table.component";
+import {CommonModule} from "@angular/common";
+import {NgModule} from "@angular/core";
+import {GenreRoutingModule} from "./genre-routing.module";
+import {GenresTableComponent} from "./genres-table.component";
 
 @NgModule({
     imports: [
@@ -11,4 +11,5 @@ import { GenresTableComponent } from "./genres-table.component";
     declarations: [GenresTableComponent],
     exports: [GenresTableComponent]
 })
-export class GenresModule { }
+export class GenresModule {
+}
