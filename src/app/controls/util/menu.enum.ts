@@ -1,5 +1,5 @@
 export enum MenuItem {
-    BOOKS,
-    GENRES,
-    AUTHORS
+  BOOKS = 'books',
+  GENRES = 'genres',
+  AUTHORS = 'authors'
 }

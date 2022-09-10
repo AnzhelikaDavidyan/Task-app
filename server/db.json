@@ -62,17 +62,18 @@
     },
     {
       "id": 7,
-      "title": "Dracula",
-      "publishedYear": 1897,
+      "title": "Dracula2",
+      "publishedYear": "2000",
       "genreId": 4,
       "authorId": 4
     },
     {
       "id": 8,
-      "title": "asd",
-      "genreId": 4,
+      "name": "anhzzel",
+      "title": "anhzzel",
+      "genreId": 3,
       "publishedYear": 2022,
-      "authorId": 1
+      "authorId": 3
     }
   ],
   "authors": [

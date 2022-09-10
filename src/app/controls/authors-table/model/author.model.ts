@@ -1,11 +1,10 @@
-export class AuthorModel {
-    constructor(public id: number, public firstName: string, public lastName: string,
-        public genreId: number) {
+import {EntityModel} from "../../model/entity.model";
 
-    }
-
-
-    get fullName(): string {
-        return `${this.firstName} ${this.lastName}`;
-    }
+export class AuthorModel extends EntityModel {
+  constructor(public override id: number,
+              public firstName: string,
+              public lastName: string,
+              public genreId: number) {
+    super(id);
+  }
 }

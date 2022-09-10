@@ -1,13 +1,15 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
-import { MatPaginator } from '@angular/material/paginator';
-import { MatSort } from '@angular/material/sort';
-import { MatTable, MatTableDataSource } from '@angular/material/table';
-import { map, Observable, of, Subject, takeUntil } from 'rxjs';
-import { DeletePopupComponent } from '../shared/delete-popup/delete-popup.component';
-import { BooksPopupComponent } from './books-popup/books-popup.component';
-import { BookModel } from './model/book.model';
-import { BookService } from './service/book.service';
+import {Component, OnInit, ViewChild} from '@angular/core';
+import {MatDialog} from '@angular/material/dialog';
+import {MatPaginator} from '@angular/material/paginator';
+import {MatSort} from '@angular/material/sort';
+import {MatTable, MatTableDataSource} from '@angular/material/table';
+import {map, Observable, of, Subject, takeUntil} from 'rxjs';
+import {DeletePopupComponent} from '../shared/delete-popup/delete-popup.component';
+import {BooksPopupComponent} from './books-popup/books-popup.component';
+import {BookModel} from './model/book.model';
+import {CrudService} from "../services/crud.service";
+import {URLS} from "../util/url";
+import {MenuItem} from "../util/menu.enum";
 
 @Component({
   selector: 'app-books-table',
@@ -29,11 +31,20 @@ export class BooksTableComponent implements OnInit {
   table!: MatTable<any>;
 
   constructor(
-    private bookService: BookService,
+    private crudService: CrudService,
     public dialog: MatDialog) {
 
-    this.bookService.getBooks()
-      .pipe(takeUntil(this.destroy$))
+    this.crudService.getList(URLS.get(MenuItem.BOOKS) as string)
+      .pipe(
+        map((list: any[]) => {
+          const books: BookModel[] = [];
+          list.forEach((item) => {
+            books.push(new BookModel(item.id, item.title, item.genreId, item.publishYear, item.authorId))
+          });
+          return books;
+        }),
+        takeUntil(this.destroy$)
+      )
       .subscribe(data => {
         this.isReady = true;
         this.dataSource = new MatTableDataSource(data);
@@ -60,8 +71,16 @@ export class BooksTableComponent implements OnInit {
     });
   }
 
-  public editBook(value: any, row: any) {
-    console.log(value);
+  public editBook(event: MouseEvent, model: BookModel) {
+    const dialogRef = this.dialog.open(BooksPopupComponent, {
+      data: {
+        model,
+        list: this.dataSource.data
+      }
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      console.log(`Dialog result: ${result}`);
+    });
   }
 
   public deleteBook(book: BookModel) {
@@ -84,7 +103,7 @@ export class BooksTableComponent implements OnInit {
     const index = data.indexOf(book);
     if (index > -1) {
       this.dataSource.data.splice(index, 1);
-      return this.bookService.removeBook(book).pipe(
+      return this.crudService.removeItem(URLS.get(MenuItem.BOOKS) as string, book).pipe(
         map(() => true)
       );
     }
