@@ -67,7 +67,9 @@ export class BooksTableComponent implements OnInit {
     public addBook() {
         const dialogRef = this.dialog.open(BooksPopupComponent);
         dialogRef.afterClosed().subscribe(result => {
-            console.log(`Dialog result: ${result}`);
+            if (result) {
+                this.table.renderRows();
+            }
         });
     }
 
@@ -75,11 +77,14 @@ export class BooksTableComponent implements OnInit {
         const dialogRef = this.dialog.open(BooksPopupComponent, {
             data: {
                 model,
-                list: this.dataSource.data
+                list: this.dataSource.data,
+                table: this.table
             }
         });
         dialogRef.afterClosed().subscribe(result => {
-            console.log(`Dialog result: ${result}`);
+            if (result) {
+                this.table.renderRows();
+            }
         });
     }
 
@@ -91,9 +96,11 @@ export class BooksTableComponent implements OnInit {
         });
         dialogRef.afterClosed().subscribe(status => {
             if (status) {
-                this.removeAction(book).subscribe(() => {
-                    this.table.renderRows();
-                }, console.error);
+                this.removeAction(book).subscribe({
+                    next: () => {
+                        this.table.renderRows();
+                    }
+                });
             }
         });
     }

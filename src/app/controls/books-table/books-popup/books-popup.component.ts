@@ -1,7 +1,7 @@
 import {Component, Inject, OnInit} from '@angular/core';
 import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
-import {map, noop, Observable, of, switchMap} from 'rxjs';
+import {map, Observable, of, switchMap} from 'rxjs';
 import {AuthorModel} from '../../authors-table/model/author.model';
 import {GenreModel} from '../../genres-table/model/genre.model';
 import {DeletePopupComponent} from '../../shared/delete-popup/delete-popup.component';
@@ -10,6 +10,7 @@ import {CrudService} from "../../services/crud.service";
 import {MenuItem} from "../../util/menu.enum";
 import {URLS} from "../../util/url";
 import {EntityModel} from "../../model/entity.model";
+import {MatTable} from "@angular/material/table";
 
 @Component({
     selector: 'app-books-popup',
@@ -28,7 +29,7 @@ export class BooksPopupComponent implements OnInit {
     constructor(private formBuilder: FormBuilder,
                 private crudService: CrudService,
                 public dialogRef: MatDialogRef<DeletePopupComponent>,
-                @Inject(MAT_DIALOG_DATA) public data: { model: any, list: any[] }) {
+                @Inject(MAT_DIALOG_DATA) public data: { model: any, list: any[], table: MatTable<any> }) {
         this.initForm(this.data?.model);
     }
 
@@ -53,48 +54,44 @@ export class BooksPopupComponent implements OnInit {
     }
 
     private initForm(model: BookModel): void {
-        if (!model) {
-            this.bookDetailForm = this.formBuilder.group({
-                title: new FormControl('', [Validators.required, Validators.maxLength(50)]),
-                publishedYear: new FormControl('', Validators.maxLength(4)),
-                genreId: new FormControl('', Validators.required),
-                authorId: new FormControl('', Validators.required)
-            });
-        } else {
-            this.bookDetailForm = this.formBuilder.group({
-                id: new FormControl(model.id),
-                title: new FormControl(model.title, [Validators.required, Validators.maxLength(50)]),
-                publishedYear: new FormControl(model.publishedYear, Validators.maxLength(4)),
-                genreId: new FormControl(model.genreId, Validators.required),
-                authorId: new FormControl(model.authorId, Validators.required)
-            });
-        }
-
+        this.bookDetailForm = this.formBuilder.group({
+            id: new FormControl(model ? model.id : ''),
+            title: new FormControl(model ? model.title : '', [Validators.required,
+                Validators.maxLength(50)]),
+            publishedYear: new FormControl(model ? model.publishedYear : '', Validators.minLength(4)),
+            genreId: new FormControl(model ? model.genreId : '', Validators.required),
+            authorId: new FormControl(model ? model.authorId : '', Validators.required)
+        });
     }
 
     public onSave(): void {
-        const model = this.bookDetailForm.value;
+        const newModel = this.bookDetailForm.value;
         if (this.bookDetailForm.valid) {
-            const foundModel = this.data?.list.find(item => item.id === model.id);
+            const foundModel = this.data?.list.find(item => item.id === newModel.id);
             if (!foundModel) {
-                this.crudService.getLastId(URLS.get(MenuItem.BOOKS) as string).pipe(
-                    switchMap((id: number) => {
-                        const book = new BookModel(++id, model.title, model.genreId.id, 2022, model.authorId.id);
-                        return this.crudService.saveItem(this.BOOKS_URL, book);
-                    })
-                ).subscribe(noop, console.error);
+                this.createBook(newModel).subscribe({
+                    next: () => {
+                        this.data.table.renderRows();
+                    }
+                })
             } else {
-                this.editAction(model);
+                this.crudService.editItem(this.BOOKS_URL, foundModel).subscribe({
+                    next: () => {
+                        this.data.table.renderRows();
+                    }
+                })
             }
         }
     }
 
-    public editAction(model: BookModel) {
-        this.crudService.editItem(this.BOOKS_URL, model).subscribe({
-            next: () => {
-            },
-            error: () => console.error
-        })
+    private createBook(model: BookModel): Observable<Object> {
+        return this.crudService.getLastId(URLS.get(MenuItem.BOOKS) as string).pipe(
+            switchMap((id: number) => {
+                const book = new BookModel(++id, model.title, (<GenreModel>model.genreId).id,
+                    model.publishedYear, (<AuthorModel>model.authorId).id);
+                return this.crudService.saveItem(this.BOOKS_URL, book);
+            })
+        );
     }
 
     public onAuthorChange(model: AuthorModel) {
@@ -109,7 +106,11 @@ export class BooksPopupComponent implements OnInit {
     public onGenreChange(model: GenreModel) {
         this.setFormValue('genreId', model);
         const filter = `genreId=${model.id}`;
-        this.filteredAuthors$ = this.crudService.getItemByFilter(this.AUTHORS_URL, filter).pipe(
+        this.filteredAuthors$ = this.filterAuthor(filter);
+    }
+
+    private filterAuthor(filter: string): Observable<any[]> {
+        return this.crudService.getItemByFilter(this.AUTHORS_URL, filter).pipe(
             map(data => {
                 const authors: any[] = [];
                 data.forEach(item => {

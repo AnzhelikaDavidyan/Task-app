@@ -62,26 +62,25 @@
     },
     {
       "id": 7,
-      "title": "Dracula2",
-      "publishedYear": "2000",
+      "title": "Dracula",
+      "publishedYear": 1897,
       "genreId": 4,
       "authorId": 4
     },
     {
       "id": 8,
-      "name": "anhzzel",
-      "title": "anhzzel",
-      "genreId": 3,
-      "publishedYear": 2022,
-      "authorId": 3
+      "title": "Frankenstein",
+      "publishedYear": 1818,
+      "genreId": 4,
+      "authorId": 4
     },
     {
       "id": 9,
-      "name": "Anzhelika",
-      "title": "Anzhelika",
+      "name": "test",
+      "title": "test",
       "genreId": 4,
-      "publishedYear": 2022,
-      "authorId": 2
+      "publishedYear": "2020",
+      "authorId": 1
     }
   ],
   "authors": [
