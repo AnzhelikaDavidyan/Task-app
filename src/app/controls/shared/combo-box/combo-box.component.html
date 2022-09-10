@@ -1,9 +1,11 @@
-<mat-form-field appearance="outline">
-    <mat-label>{{label}}</mat-label>
-    <mat-select>
-        <mat-option *ngFor="let item of list" [value]="item">
-            {{item.name}}
-        </mat-option>
-    </mat-select>
-    <mat-error>{{errorMessages}}</mat-error>
-</mat-form-field>
+<div>
+    <mat-form-field appearance="outline">
+        <mat-label>{{label}}</mat-label>
+        <mat-select>
+            <mat-option *ngFor="let item of list" [value]="item" (onSelectionChange)="onComboChange(item)">
+                {{item[nameField] }}
+            </mat-option>
+        </mat-select>
+        <mat-error>{{errorMessages}}</mat-error>
+    </mat-form-field>
+</div>

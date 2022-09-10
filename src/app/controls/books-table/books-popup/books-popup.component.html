@@ -14,41 +14,20 @@
                 <mat-error>Published Year is required.</mat-error>
             </mat-form-field>
 
-            <!--            <app-combo-box-->
-            <!--                formControlName="genreId"-->
-            <!--                [label]="'Genre'"-->
-            <!--                [list]="genres$ | async"-->
-            <!--                [errorMessages]="['Genre is required.']"-->
-            <!--                [form]="bookDetailForm">-->
-            <!--            </app-combo-box>-->
+            <app-combo-box
+                [label]="'Genre'"
+                [list]="genres$ | async"
+                [errorMessages]="['Genre is required.']"
+                (onModelChange)="onGenreChange($event)">
+            </app-combo-box>
 
-            <!--            <app-combo-box-->
-            <!--                formControlName="authorId"-->
-            <!--                [label]="'Author'"-->
-            <!--                [list]="filteredAuthors$ | async"-->
-            <!--                [errorMessages]="['Author is required.']"-->
-            <!--                [form]="bookDetailForm">-->
-            <!--            </app-combo-box>-->
-
-            <mat-form-field appearance="outline">
-                <mat-label>Genre</mat-label>
-                <mat-select formControlName="genreId">
-                    <mat-option *ngFor="let genre of genres$ | async" [value]="genre">
-                        {{genre.name}}
-                    </mat-option>
-                </mat-select>
-                <mat-error>Genre is required.</mat-error>
-            </mat-form-field>
-
-            <mat-form-field appearance="outline">
-                <mat-label>Author</mat-label>
-                <mat-select formControlName="authorId">
-                    <mat-option *ngFor="let author of filteredAuthors$ | async" [value]="author">
-                        {{author.firstName}}
-                    </mat-option>
-                </mat-select>
-                <mat-error>Author is required.</mat-error>
-            </mat-form-field>
+            <app-combo-box
+                [label]="'Author'"
+                [list]="filteredAuthors$ | async"
+                [nameField]="'firstName'"
+                [errorMessages]="['Author is required.']"
+                (onModelChange)="onAuthorChange($event)">
+            </app-combo-box>
         </form>
 
     </section>

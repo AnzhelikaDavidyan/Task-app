@@ -74,6 +74,14 @@
       "genreId": 3,
       "publishedYear": 2022,
       "authorId": 3
+    },
+    {
+      "id": 9,
+      "name": "Anzhelika",
+      "title": "Anzhelika",
+      "genreId": 4,
+      "publishedYear": 2022,
+      "authorId": 2
     }
   ],
   "authors": [

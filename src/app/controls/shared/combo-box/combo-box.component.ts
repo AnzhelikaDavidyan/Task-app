@@ -1,5 +1,4 @@
-import {Component, Input, OnChanges, OnInit, SimpleChanges} from '@angular/core';
-import {FormGroup} from '@angular/forms';
+import {Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges} from '@angular/core';
 import {EntityModel} from "../../model/entity.model";
 
 @Component({
@@ -10,10 +9,11 @@ import {EntityModel} from "../../model/entity.model";
 export class ComboBoxComponent implements OnInit, OnChanges {
 
     @Input() label!: string;
-    @Input() formControlName!: string;
-    @Input() list: EntityModel[] | null = [];
+    @Input() list: any[] | null = [];
     @Input() errorMessages!: string[];
-    @Input() form!: FormGroup;
+    @Input() nameField: string = 'name';
+
+    @Output() onModelChange = new EventEmitter<any>();
 
     constructor() {
 
@@ -26,11 +26,9 @@ export class ComboBoxComponent implements OnInit, OnChanges {
     }
 
     ngOnInit(): void {
-        console.log(this.form);
-        this.form.valueChanges.subscribe(a => {
-            console.log(a);
-        })
-        // this.form.addControl(this.formControlName, new FormControl(''))
     }
 
+    public onComboChange(model: EntityModel) {
+        this.onModelChange.emit(model);
+    }
 }

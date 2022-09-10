@@ -36,16 +36,7 @@ export class BooksPopupComponent implements OnInit {
     public ngOnInit(): void {
         this.genres$ = this.getGenres() as Observable<GenreModel[]>;
         this.bookDetailForm.valueChanges.subscribe(changes => {
-            const filter = `genreId=${changes.genreId.id}`;
-            this.filteredAuthors$ = this.crudService.getItemByFilter(this.AUTHORS_URL, filter).pipe(
-                map(data => {
-                    const authors: any[] = [];
-                    data.forEach(item => {
-                        authors.push(new AuthorModel(item.id, item.firstName, item.lastName, item.genreId))
-                    })
-                    return authors;
-                })
-            );
+            console.log(changes)
         })
     }
 
@@ -104,6 +95,29 @@ export class BooksPopupComponent implements OnInit {
             },
             error: () => console.error
         })
+    }
+
+    public onAuthorChange(model: AuthorModel) {
+        this.setFormValue('authorId', model);
+        this.bookDetailForm.controls['authorId'].setValue(model);
+    }
+
+    private setFormValue(name: string, model: any) {
+        this.bookDetailForm.controls[name].setValue(model);
+    }
+
+    public onGenreChange(model: GenreModel) {
+        this.setFormValue('genreId', model);
+        const filter = `genreId=${model.id}`;
+        this.filteredAuthors$ = this.crudService.getItemByFilter(this.AUTHORS_URL, filter).pipe(
+            map(data => {
+                const authors: any[] = [];
+                data.forEach(item => {
+                    authors.push(new AuthorModel(item.id, item.firstName, item.lastName, item.genreId))
+                })
+                return authors;
+            })
+        );
     }
 }
 
