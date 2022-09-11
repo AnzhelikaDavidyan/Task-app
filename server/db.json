@@ -19,13 +19,6 @@
   ],
   "books": [
     {
-      "id": 1,
-      "title": "It Ends with Us",
-      "genreId": 3,
-      "publishedYear": 2016,
-      "authorId": 4
-    },
-    {
       "id": 2,
       "title": "Jane Eyre",
       "publishedYear": 1997,
@@ -44,13 +37,6 @@
       "title": "Julius Caesar",
       "publishedYear": 1997,
       "genreId": 2,
-      "authorId": 4
-    },
-    {
-      "id": 5,
-      "title": "A Game of Thrones",
-      "publishedYear": 1997,
-      "genreId": 3,
       "authorId": 4
     },
     {
@@ -73,6 +59,22 @@
       "publishedYear": 1818,
       "genreId": 4,
       "authorId": 4
+    },
+    {
+      "id": 9,
+      "name": "aaa2",
+      "title": "aaa2",
+      "genreId": 1,
+      "publishedYear": "2020",
+      "authorId": 5
+    },
+    {
+      "id": 10,
+      "name": "test3",
+      "title": "test3",
+      "genreId": 4,
+      "publishedYear": "2020",
+      "authorId": 1
     }
   ],
   "authors": [

@@ -74,13 +74,13 @@ export class BooksPopupComponent implements OnInit {
             if (this.data.isNew) {
                 this.createBook(model).subscribe({
                     next: () => {
-                        this.dataCommunicationService.notify({done: true});
+                        this.dataCommunicationService.notify({isCreated: true});
                     }
                 })
             } else {
                 this.onEdit(model).subscribe({
                     next: () => {
-                        this.dataCommunicationService.notify({done: true});
+                        this.dataCommunicationService.notify({isEdited: true});
                     }
                 });
             }
@@ -116,10 +116,12 @@ export class BooksPopupComponent implements OnInit {
 
     public onGenreChange(model: GenreModel) {
         this.setFormValue('genreId', model);
-        if (model.id !== (<GenreModel>this.bookModel.genreId).id) {
+        if (!this.bookModel) {
+            const filter = `genreId=${model.id}`;
+            this.filteredAuthors$ = this.filterAuthor(filter);
+        } else if (model.id !== (<GenreModel>this.bookModel.genreId).id) {
             this.bookDetailForm.controls['authorId'].setValue(null);
             this.bookModel.authorId = null;
-
             const filter = `genreId=${model.id}`;
             this.filteredAuthors$ = this.filterAuthor(filter);
         }

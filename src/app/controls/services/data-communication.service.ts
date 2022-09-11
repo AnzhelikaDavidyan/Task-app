@@ -15,3 +15,7 @@ export class DataCommunicationService {
         return this.notifier;
     }
 }
+
+export interface DataCommunicationModel {
+    isDeleted: boolean;
+}

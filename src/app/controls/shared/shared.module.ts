@@ -4,11 +4,13 @@ import {DeletePopupComponent} from './delete-popup/delete-popup.component';
 import {ComboBoxComponent} from './combo-box/combo-box.component';
 import {CommonModule} from "@angular/common";
 import {ReactiveFormsModule} from "@angular/forms";
+import { TableComponent } from './table/table.component';
 
 @NgModule({
     declarations: [
         DeletePopupComponent,
-        ComboBoxComponent
+        ComboBoxComponent,
+        TableComponent
     ],
     imports: [
         MaterialModule,
@@ -17,7 +19,7 @@ import {ReactiveFormsModule} from "@angular/forms";
     ],
     providers: [],
     entryComponents: [DeletePopupComponent],
-    exports: [DeletePopupComponent, ComboBoxComponent]
+    exports: [DeletePopupComponent, ComboBoxComponent, TableComponent]
 })
 export class SharedModule {
 }

@@ -1,17 +1,15 @@
-import {Component, OnInit, ViewChild} from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {MatDialog} from '@angular/material/dialog';
-import {MatPaginator} from '@angular/material/paginator';
-import {MatSort} from '@angular/material/sort';
-import {MatTable, MatTableDataSource} from '@angular/material/table';
 import {map, Observable, of, Subject, takeUntil, zip} from 'rxjs';
 import {DeletePopupComponent} from '../shared/delete-popup/delete-popup.component';
 import {BooksPopupComponent} from './books-popup/books-popup.component';
 import {BookModel} from './model/book.model';
 import {CrudService} from "../services/crud.service";
 import {AUTHORS_URL, BOOKS_URL, GENRES_URL} from "../util/url";
-import {DataCommunicationService} from "../services/data-communication.service";
+import {DataCommunicationModel, DataCommunicationService} from "../services/data-communication.service";
 import {GenreModel} from "../genres-table/model/genre.model";
 import {AuthorModel} from "../authors-table/model/author.model";
+import {ColumnModel} from "../shared/table/table.component";
 
 @Component({
     selector: 'app-books-table',
@@ -21,23 +19,20 @@ import {AuthorModel} from "../authors-table/model/author.model";
 export class BooksTableComponent implements OnInit {
 
     private destroy$ = new Subject();
-    public dataSource: MatTableDataSource<BookModel> = new MatTableDataSource();
     public displayedColumns: string[] = ['id', 'title', 'actions'];
-
-    @ViewChild(MatPaginator) paginator!: MatPaginator | null;
-    @ViewChild(MatSort) sort!: MatSort | null;
-    @ViewChild(MatTable) table!: MatTable<any>;
+    public columns: ColumnModel[] = [];
+    public list: BookModel [] = [];
 
     constructor(
         private crudService: CrudService,
         private dataCommunicationService: DataCommunicationService,
         public dialog: MatDialog) {
-
+        this.columns = this.displayedColumns.map((item, index) => {
+            return {id: index, systemName: item, title: item.toUpperCase()} as ColumnModel;
+        });
         this.getLists()
             .subscribe(data => {
-                this.dataSource = new MatTableDataSource(data);
-                this.dataSource.paginator = this.paginator;
-                this.dataSource.sort = this.sort;
+                this.list = data;
             });
     }
 
@@ -53,35 +48,20 @@ export class BooksTableComponent implements OnInit {
                         item.authorId = authors.find((author: AuthorModel) => author.id === item.authorId);
                         models.push(new BookModel(item.id, item.title, item.genreId, item.publishedYear, item.authorId))
                     });
-                    return books;
+                    return models;
                 }),
                 takeUntil(this.destroy$)
             );
     }
 
     ngOnInit(): void {
-        this.dataCommunicationService.getNotifier().subscribe({
-            next: () => {
-                this.table.renderRows();
-            }
-        })
-    }
-
-    applyFilter(event: Event) {
-        const filterValue = (event.target as HTMLInputElement).value;
-        this.dataSource.filter = filterValue.trim().toLowerCase();
-
-        if (this.dataSource.paginator) {
-            this.dataSource.paginator.firstPage();
-        }
     }
 
     public addBook() {
         const dialogRef = this.dialog.open(BooksPopupComponent, {
             data: {
-                table: this.table,
                 isNew: true,
-                data: null,
+                list: null,
                 title: 'Add Book'
             },
             disableClose: true,
@@ -91,12 +71,11 @@ export class BooksTableComponent implements OnInit {
         });
     }
 
-    public editBook(event: MouseEvent, model: BookModel) {
+    public editBook([event, model]: [MouseEvent, BookModel]) {
         const dialogRef = this.dialog.open(BooksPopupComponent, {
             data: {
                 model,
-                list: this.dataSource.data,
-                table: this.table,
+                list: this.list,
                 title: 'Edit Book'
             },
             disableClose: true,
@@ -116,7 +95,7 @@ export class BooksTableComponent implements OnInit {
             if (status) {
                 this.removeAction(book).subscribe({
                     next: () => {
-                        this.table.renderRows();
+                        this.dataCommunicationService.notify({isDeleted: true} as DataCommunicationModel)
                     }
                 });
             }
@@ -124,10 +103,10 @@ export class BooksTableComponent implements OnInit {
     }
 
     private removeAction(book: BookModel): Observable<boolean> {
-        const data = this.dataSource.data;
+        const data = this.list;
         const index = data.indexOf(book);
         if (index > -1) {
-            this.dataSource.data.splice(index, 1);
+            this.list.splice(index, 1);
             return this.crudService.removeItem(BOOKS_URL, book).pipe(
                 map(() => true)
             );
