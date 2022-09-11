@@ -11,6 +11,7 @@ import { BooksTableComponent } from './controls/books-table/books-table.componen
 import { HeaderComponent } from './controls/header/header.component';
 import { SharedModule } from './controls/shared/shared.module';
 import { MaterialModule } from './material.module';
+import {MatSortModule} from "@angular/material/sort";
 
 @NgModule({
   declarations: [
@@ -19,15 +20,16 @@ import { MaterialModule } from './material.module';
     BooksTableComponent,
     BooksPopupComponent
   ],
-  imports: [
-    BrowserModule,
-    HttpClientModule,
-    AppRoutingModule,
-    MaterialModule,
-    BrowserAnimationsModule,
-    ReactiveFormsModule,
-    SharedModule
-  ],
+    imports: [
+        BrowserModule,
+        HttpClientModule,
+        AppRoutingModule,
+        MaterialModule,
+        BrowserAnimationsModule,
+        ReactiveFormsModule,
+        SharedModule,
+        MatSortModule
+    ],
   providers: [],
   entryComponents: [BooksPopupComponent],
   bootstrap: [AppComponent]

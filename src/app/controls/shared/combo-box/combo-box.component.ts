@@ -13,21 +13,28 @@ export class ComboBoxComponent implements OnInit, OnChanges {
     @Input() list: any[] | null = [];
     @Input() errorMessages!: string[];
     @Input() nameField: string = 'name';
+    @Input() parentGroup!: FormGroup;
+    @Input() formControlName!: string;
+    @Input() selectedValue: any;
 
     @Output() onModelChange = new EventEmitter<any>();
 
 
     constructor(private rootFormGroup: FormGroupDirective) {
+        console.log('sd')
     }
 
     ngOnChanges(changes: SimpleChanges): void {
         if (changes['list']) {
             this.list = changes['list'].currentValue;
         }
+        if (changes['selectedValue']) {
+            console.log(this.selectedValue)
+        }
     }
 
     ngOnInit(): void {
-
+        console.log(this.parentGroup)
     }
 
     public onComboChange(model: EntityModel) {

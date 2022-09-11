@@ -46,6 +46,8 @@ export class CrudService {
     }
 
     public getItemById(url: string, systemName: string, id: number): Observable<any> {
-        return this.httpClient.get<EntityModel[]>(`${url}?${systemName}=${id}`);
+        return this.httpClient.get<EntityModel[]>(`${url}?${systemName}=${id}`).pipe(
+            map((item) => item[0])
+        );
     }
 }

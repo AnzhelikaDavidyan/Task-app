@@ -14,22 +14,46 @@
                 <mat-error>Published Year is required.</mat-error>
             </mat-form-field>
 
-            <app-combo-box
-                formGroupName="combos"
-                [label]="'Genre'"
-                [list]="genres$ | async"
-                [errorMessages]="['Genre is required.']"
-                (onModelChange)="onGenreChange($event)"
-            >
-            </app-combo-box>
 
-            <app-combo-box
-                [label]="'Author'"
-                [list]="filteredAuthors$ | async"
-                [nameField]="'firstName'"
-                [errorMessages]="['Author is required.']"
-                (onModelChange)="onAuthorChange($event)">
-            </app-combo-box>
+            <mat-form-field appearance="outline">
+                <mat-label>Genre</mat-label>
+                <mat-select [(value)]="bookModel.genreId">
+                    <mat-option *ngFor="let item of genres$ | async" [value]="item"
+                                (onSelectionChange)="onGenreChange(item)">
+                        {{item.name }}
+
+                    </mat-option>
+                </mat-select>
+                <mat-error>AAA</mat-error>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+                <mat-label>Author</mat-label>
+                <mat-select formControlName="authorId" [(value)]="bookModel.authorId">
+                    <mat-option *ngFor="let item of filteredAuthors$ | async" [value]="item"
+                                (onSelectionChange)="onAuthorChange(item)">
+                        {{item.firstName + item.lastName }}
+                    </mat-option>
+                </mat-select>
+                <mat-error>BBB</mat-error>
+            </mat-form-field>
+            <!--            <app-combo-box-->
+            <!--                [label]="'Genre'"-->
+            <!--                [list]="genres$ | async"-->
+            <!--                [errorMessages]="['Genre is required.']"-->
+            <!--                (onModelChange)="onGenreChange($event)"-->
+            <!--                [parentGroup]="bookDetailForm"-->
+            <!--                [formControlName]="'genreId'">-->
+            <!--            </app-combo-box>-->
+
+            <!--            <app-combo-box-->
+            <!--                [label]="'Author'"-->
+            <!--                [list]="filteredAuthors$ | async"-->
+            <!--                [nameField]="'firstName'"-->
+            <!--                [errorMessages]="['Author is required.']"-->
+            <!--                (onModelChange)="onAuthorChange($event)"-->
+            <!--                [parentGroup]="bookDetailForm">-->
+            <!--            </app-combo-box>-->
         </form>
 
     </section>

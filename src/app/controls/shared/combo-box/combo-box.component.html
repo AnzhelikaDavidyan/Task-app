@@ -1,7 +1,7 @@
-<div>
+<div [formGroup]="parentGroup">
     <mat-form-field appearance="outline">
         <mat-label>{{label}}</mat-label>
-        <mat-select>
+        <mat-select [formControlName]="'genreId'">
             <mat-option *ngFor="let item of list" [value]="item" (onSelectionChange)="onComboChange(item)">
                 {{item[nameField] }}
             </mat-option>

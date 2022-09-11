@@ -19,6 +19,13 @@
   ],
   "books": [
     {
+      "id": 1,
+      "title": "It Ends with Us",
+      "genreId": 3,
+      "publishedYear": 2016,
+      "authorId": 4
+    },
+    {
       "id": 2,
       "title": "Jane Eyre",
       "publishedYear": 1997,
@@ -65,14 +72,6 @@
       "title": "Frankenstein",
       "publishedYear": 1818,
       "genreId": 4,
-      "authorId": 4
-    },
-    {
-      "id": 9,
-      "name": "asd",
-      "title": "asd",
-      "genreId": 1,
-      "publishedYear": "2311",
       "authorId": 4
     }
   ],

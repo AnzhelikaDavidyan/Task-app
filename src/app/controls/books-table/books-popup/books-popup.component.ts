@@ -1,4 +1,4 @@
-import {Component, Inject, OnInit} from '@angular/core';
+import {Component, Inject, OnChanges, OnInit, SimpleChanges} from '@angular/core';
 import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 import {map, Observable, of, switchMap} from 'rxjs';
@@ -23,6 +23,7 @@ export class BooksPopupComponent implements OnInit {
     public bookDetailForm!: FormGroup;
     public genres$: Observable<GenreModel[]> = of([]);
     public filteredAuthors$: Observable<AuthorModel[]> = of([]);
+    public bookModel!: BookModel;
 
     constructor(private formBuilder: FormBuilder,
                 private crudService: CrudService,
@@ -32,6 +33,7 @@ export class BooksPopupComponent implements OnInit {
                     model: BookModel, list: any[], table: MatTable<any>,
                     isNew: boolean, title: string
                 }) {
+        this.bookModel = this.data.model;
         this.initForm(this.data.model);
     }
 
@@ -86,7 +88,9 @@ export class BooksPopupComponent implements OnInit {
     }
 
     private onEdit(model: BookModel): Observable<Object> {
-        const foundModel = this.data?.list.find(item => item.id === model.id);
+        const foundModel: BookModel = this.data?.list.find(item => item.id === model.id);
+        foundModel.genreId = (<GenreModel>foundModel.genreId).id;
+        foundModel.authorId = (<AuthorModel>foundModel.authorId).id
         return this.crudService.editItem(BOOKS_URL, foundModel);
     }
 
@@ -103,6 +107,7 @@ export class BooksPopupComponent implements OnInit {
     public onAuthorChange(model: AuthorModel) {
         this.setFormValue('authorId', model);
         this.bookDetailForm.controls['authorId'].setValue(model);
+        this.bookModel.authorId = model;
     }
 
     private setFormValue(name: string, model: any) {
@@ -111,8 +116,14 @@ export class BooksPopupComponent implements OnInit {
 
     public onGenreChange(model: GenreModel) {
         this.setFormValue('genreId', model);
-        const filter = `genreId =${model.id}`;
-        this.filteredAuthors$ = this.filterAuthor(filter);
+        if (model.id !== (<GenreModel>this.bookModel.genreId).id) {
+            this.bookDetailForm.controls['authorId'].setValue(null);
+            this.bookModel.authorId = null;
+
+            const filter = `genreId=${model.id}`;
+            this.filteredAuthors$ = this.filterAuthor(filter);
+        }
+
     }
 
     private filterAuthor(filter: string): Observable<any[]> {
@@ -125,6 +136,10 @@ export class BooksPopupComponent implements OnInit {
                 return authors;
             })
         );
+    }
+
+    onComboChange(item: EntityModel) {
+        console.log(item);
     }
 }
 

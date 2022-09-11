@@ -7,7 +7,7 @@ export class BookModel extends EntityModel {
                 public title: string,
                 public genreId: number | GenreModel,
                 public publishedYear: number,
-                public authorId: number | AuthorModel) {
+                public authorId: number | AuthorModel | null) {
         super(id, title);
     }
 }

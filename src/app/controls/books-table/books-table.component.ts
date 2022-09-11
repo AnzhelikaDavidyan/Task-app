@@ -23,9 +23,9 @@ export class BooksTableComponent implements OnInit {
     private destroy$ = new Subject();
     public dataSource: MatTableDataSource<BookModel> = new MatTableDataSource();
     public displayedColumns: string[] = ['id', 'title', 'actions'];
-    @ViewChild(MatPaginator) paginator: MatPaginator | undefined;
-    @ViewChild(MatSort) sort: MatSort | undefined;
 
+    @ViewChild(MatPaginator) paginator!: MatPaginator | null;
+    @ViewChild(MatSort) sort!: MatSort | null;
     @ViewChild(MatTable) table!: MatTable<any>;
 
     constructor(
@@ -33,19 +33,25 @@ export class BooksTableComponent implements OnInit {
         private dataCommunicationService: DataCommunicationService,
         public dialog: MatDialog) {
 
-        this.getBooks()
+        this.getLists()
             .subscribe(data => {
                 this.dataSource = new MatTableDataSource(data);
+                this.dataSource.paginator = this.paginator;
+                this.dataSource.sort = this.sort;
             });
     }
 
-    private getBooks(): Observable<BookModel[]> {
-        return this.crudService.getList(BOOKS_URL)
+    private getLists(): Observable<BookModel[]> {
+        return zip(this.crudService.getList(BOOKS_URL),
+            this.crudService.getList(GENRES_URL),
+            this.crudService.getList(AUTHORS_URL))
             .pipe(
-                map((list: any[]) => {
-                    const books: BookModel[] = [];
-                    list.forEach((item) => {
-                        books.push(new BookModel(item.id, item.title, item.genreId, item.publishedYear, item.authorId))
+                map(([books, genres, authors]: [any, any, any]) => {
+                    const models: BookModel[] = [];
+                    books.forEach((item: BookModel) => {
+                        item.genreId = genres.find((genre: GenreModel) => genre.id === item.genreId);
+                        item.authorId = authors.find((author: AuthorModel) => author.id === item.authorId);
+                        models.push(new BookModel(item.id, item.title, item.genreId, item.publishedYear, item.authorId))
                     });
                     return books;
                 }),
@@ -77,36 +83,27 @@ export class BooksTableComponent implements OnInit {
                 isNew: true,
                 data: null,
                 title: 'Add Book'
-            }
+            },
+            disableClose: true,
+            autoFocus: false,
+            width: '400px',
+            height: 'auto'
         });
     }
 
     public editBook(event: MouseEvent, model: BookModel) {
-        const genre$ = this.crudService.getItemById(GENRES_URL, 'id', +model.genreId);
-        const author$ = this.crudService.getItemById(AUTHORS_URL, 'id', +model.authorId);
-        const model$ = zip(genre$, author$).pipe(
-            map(([genre, author]: [GenreModel[], AuthorModel[]]) => {
-                model.genreId = genre[0];
-                model.authorId = author[0];
-                return model;
-            })
-        ).subscribe({
-            next: (model: BookModel) => {
-                const dialogRef = this.dialog.open(BooksPopupComponent, {
-                    data: {
-                        model,
-                        list: this.dataSource.data,
-                        table: this.table,
-                        title: 'Edit Book'
-                    },
-                    disableClose: true,
-                    autoFocus: false,
-                    width: '400px',
-                    height: 'auto'
-                });
-            }
+        const dialogRef = this.dialog.open(BooksPopupComponent, {
+            data: {
+                model,
+                list: this.dataSource.data,
+                table: this.table,
+                title: 'Edit Book'
+            },
+            disableClose: true,
+            autoFocus: false,
+            width: '400px',
+            height: 'auto'
         });
-
     }
 
     public deleteBook(book: BookModel) {
