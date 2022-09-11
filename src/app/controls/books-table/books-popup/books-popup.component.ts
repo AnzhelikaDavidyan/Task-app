@@ -88,9 +88,12 @@ export class BooksPopupComponent implements OnInit {
     }
 
     private onEdit(model: BookModel): Observable<Object> {
-        const foundModel: BookModel = this.data?.list.find(item => item.id === model.id);
+        const index = this.data?.list.findIndex(item => item.id === model.id);
+        const foundModel: BookModel = this.data?.list[index];
         foundModel.genreId = (<GenreModel>foundModel.genreId).id;
-        foundModel.authorId = (<AuthorModel>foundModel.authorId).id
+        foundModel.authorId = (<AuthorModel>foundModel.authorId).id;
+        this.data.list[index] = foundModel;
+        this.data.list = this.data.list.filter((item) => item.id !== foundModel.id);
         return this.crudService.editItem(BOOKS_URL, foundModel);
     }
 
@@ -99,6 +102,7 @@ export class BooksPopupComponent implements OnInit {
             switchMap((id: number) => {
                 const book = new BookModel(++id, model.title, (<GenreModel>model.genreId).id,
                     model.publishedYear, (<AuthorModel>model.authorId).id);
+                this.data.list.push(book);
                 return this.crudService.saveItem(BOOKS_URL, book);
             })
         );

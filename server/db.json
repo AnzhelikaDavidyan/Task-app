@@ -20,10 +20,9 @@
   "books": [
     {
       "id": 2,
+      "name": "Jane Eyre",
       "title": "Jane Eyre",
-      "publishedYear": 1997,
-      "genreId": 1,
-      "authorId": 4
+      "publishedYear": 1997
     },
     {
       "id": 3,
@@ -72,6 +71,22 @@
       "id": 10,
       "name": "test3",
       "title": "test3",
+      "genreId": 4,
+      "publishedYear": "2020",
+      "authorId": 1
+    },
+    {
+      "id": 11,
+      "name": "111",
+      "title": "111",
+      "genreId": 4,
+      "publishedYear": "1111",
+      "authorId": 1
+    },
+    {
+      "id": 12,
+      "name": "test",
+      "title": "test",
       "genreId": 4,
       "publishedYear": "2020",
       "authorId": 1

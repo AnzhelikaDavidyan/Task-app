@@ -61,7 +61,7 @@ export class BooksTableComponent implements OnInit {
         const dialogRef = this.dialog.open(BooksPopupComponent, {
             data: {
                 isNew: true,
-                list: null,
+                list: this.list,
                 title: 'Add Book'
             },
             disableClose: true,
