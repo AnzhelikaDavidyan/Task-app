@@ -22,9 +22,9 @@
             "id": 1,
             "title": "It Ends with Us",
             "description": "lorem ipsum dolor sit",
-            "publishedYear": 2016,
             "genreId": 1,
-            "authorId": 4
+            "publishedYear": 2016,
+            "authorId": 1
         },
         {
             "id": 2,
@@ -32,7 +32,7 @@
             "description": "lorem ipsum dolor sit",
             "publishedYear": 1997,
             "genreId": 1,
-            "authorId": 4
+            "authorId": 8
         },
         {
             "id": 3,
@@ -40,7 +40,7 @@
             "description": "lorem ipsum dolor sit",
             "publishedYear": 1997,
             "genreId": 2,
-            "authorId": 4
+            "authorId": 6
         },
         {
             "id": 4,
@@ -48,7 +48,7 @@
             "description": "lorem ipsum dolor sit",
             "publishedYear": 1997,
             "genreId": 2,
-            "authorId": 4
+            "authorId": 6
         },
         {
             "id": 5,
@@ -56,7 +56,7 @@
             "description": "lorem ipsum dolor sit",
             "publishedYear": 1997,
             "genreId": 3,
-            "authorId": 4
+            "authorId": 7
         },
         {
             "id": 6,
@@ -72,7 +72,7 @@
             "description": "lorem ipsum dolor sit",
             "publishedYear": 1897,
             "genreId": 4,
-            "authorId": 4
+            "authorId": 2
         },
         {
             "id": 8,
@@ -81,14 +81,6 @@
             "publishedYear": 1818,
             "genreId": 4,
             "authorId": 4
-        },
-        {
-            "id": 9,
-            "title": "Anzhelika",
-            "description": "aa",
-            "genreId": 4,
-            "publishedYear": 2002,
-            "authorId": 2
         }
     ],
     "authors": [
@@ -123,9 +115,21 @@
             "genreId": 1
         },
         {
-            "id": 5,
-            "firstName": "Colleen",
-            "lastName": " Hoover 2",
+            "id": 6,
+            "firstName": "William ",
+            "lastName": "Shakespeare",
+            "genreId": 2
+        },
+        {
+            "id": 7,
+            "firstName": "George",
+            "lastName": "R. R. Martin",
+            "genreId": 3
+        },
+        {
+            "id": 8,
+            "firstName": "Charlotte",
+            "lastName": "Brontë",
             "genreId": 1
         }
     ]
