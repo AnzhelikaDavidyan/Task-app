@@ -84,7 +84,12 @@ export class BooksTableComponent implements OnInit {
     }
 
     public deleteBook(book: BookModel) {
-        const dialogRef = this.dialog.open(DeletePopupComponent);
+        const dialogRef = this.dialog.open(DeletePopupComponent, {
+            data: {
+                title: 'Removing an Item',
+                message: ' Are you sure you want to remove the selected Item(s) ?'
+            }
+        });
         dialogRef.afterClosed().subscribe(status => {
             if (status) {
                 this.removeAction(book).subscribe({

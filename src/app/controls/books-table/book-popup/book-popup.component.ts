@@ -137,7 +137,7 @@ export class BookPopupComponent implements OnInit {
     }
 
     private filterAuthor(filter: string): Observable<any[]> {
-        return this.crudService.getItemByFilter(AUTHORS_URL, filter).pipe(
+        return this.crudService.getItemsByFilter(AUTHORS_URL, filter).pipe(
             map(data => {
                 const authors: any[] = [];
                 data.forEach(item => {

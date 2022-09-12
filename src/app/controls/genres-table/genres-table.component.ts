@@ -1,10 +1,10 @@
 import {Component, OnInit, ViewChild} from '@angular/core';
-import {map, Observable, of, Subject, takeUntil} from "rxjs";
+import {map, mergeMap, Observable, of, Subject, switchMap, takeUntil, zip} from "rxjs";
 import {MatTable} from "@angular/material/table";
 import {GenreModel} from "./model/genre.model";
 import {CrudService} from "../services/crud.service";
 import {MatDialog} from "@angular/material/dialog";
-import {GENRES_URL} from "../util/url";
+import {AUTHORS_URL, BOOKS_URL, GENRES_URL} from "../util/url";
 import {ColumnModel, PopupInfo} from "../shared/util/table.util";
 import {DeletePopupComponent} from "../shared/delete-popup/delete-popup.component";
 import {DataCommunicationModel, DataCommunicationService} from "../services/data-communication.service";
@@ -70,16 +70,40 @@ export class GenresTableComponent implements OnInit {
     }
 
     public delete(model: GenreModel) {
-        const dialogRef = this.dialog.open(DeletePopupComponent);
+        const dialogRef = this.dialog.open(DeletePopupComponent, {
+            data: {
+                title: 'Removing an Item',
+                message: ' Are you sure you want to remove the selected Item(s) and Related Data?'
+            }
+        });
         dialogRef.afterClosed().subscribe(status => {
             if (status) {
-                this.removeAction(model).subscribe({
+                this.removeAction(model).pipe(
+                    switchMap((_) => this.removeRelatedData(model))
+                ).subscribe({
                     next: () => {
                         this.dataCommunicationService.notify({isDeleted: true} as DataCommunicationModel)
                     }
                 });
             }
         });
+    }
+
+    private removeRelatedData(model: GenreModel): Observable<boolean> {
+        const filter = `genreId=${model.id}`;
+        const deletedAuthors$ = this.getDeletedItems(filter, AUTHORS_URL);
+        const deletedBooks$ = this.getDeletedItems(filter, BOOKS_URL);
+        return zip(deletedAuthors$, deletedBooks$).pipe(
+            map(_ => true)
+        );
+    }
+
+    private getDeletedItems(filter: string, url: string): Observable<Object | []> {
+        return this.crudService.getItemsByFilter(url, filter).pipe(
+            map((data) => data.map(item => item.id)),
+            mergeMap((ids: number[]) => ids.length ? this.crudService.bulkDelete(url, ids) :
+                of([]))
+        );
     }
 
     public edit([event, model]: [MouseEvent, GenreModel]) {

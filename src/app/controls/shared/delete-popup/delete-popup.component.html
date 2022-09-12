@@ -1,6 +1,6 @@
-<h1 mat-dialog-title>Removing an Item</h1>
+<h1 mat-dialog-title>{{data.title}}</h1>
 <mat-dialog-content>
-    <section>Are you sure you want to remove the selected Item(s)?</section>
+    <section>{{data.message}}</section>
 </mat-dialog-content>
 <mat-dialog-actions align="end">
     <button mat-button mat-dialog-close (click)="noAction()">No</button>

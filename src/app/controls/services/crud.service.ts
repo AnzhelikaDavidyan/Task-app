@@ -18,6 +18,10 @@ export class CrudService {
         return this.httpClient.delete(`${url}/${model.id}`);
     }
 
+    public bulkDelete(url: string, ids: number[]): Observable<Object> {
+        return this.httpClient.delete(`${url}/${ids.toString()}`);
+    }
+
     public saveItem(url: string, model: EntityModel): Observable<Object> {
         const headers = {'content-type': 'application/json'};
         return this.httpClient.post(`${url}`, JSON.stringify(model), {
@@ -41,7 +45,7 @@ export class CrudService {
         )
     }
 
-    public getItemByFilter(url: string, filter: string): Observable<any[]> {
+    public getItemsByFilter(url: string, filter: string): Observable<any[]> {
         return this.httpClient.get<EntityModel[]>(`${url}?${filter}`);
     }
 
