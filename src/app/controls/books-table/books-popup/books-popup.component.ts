@@ -1,4 +1,4 @@
-import {Component, Inject, OnChanges, OnInit, SimpleChanges} from '@angular/core';
+import {Component, Inject, OnInit} from '@angular/core';
 import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 import {map, Observable, of, switchMap} from 'rxjs';
@@ -25,6 +25,9 @@ export class BooksPopupComponent implements OnInit {
     public filteredAuthors$: Observable<AuthorModel[]> = of([]);
     public bookModel!: BookModel;
 
+    public genreId = new FormControl<number>(0);
+    public authorId = new FormControl<number>(0);
+
     constructor(private formBuilder: FormBuilder,
                 private crudService: CrudService,
                 private dataCommunicationService: DataCommunicationService,
@@ -49,8 +52,8 @@ export class BooksPopupComponent implements OnInit {
         return this.crudService.getList(GENRES_URL).pipe(
             map((list: EntityModel[]) => {
                 const genres: GenreModel[] = [];
-                list.forEach((item) => {
-                    genres.push(new GenreModel(item.id, item.name as string))
+                list.forEach((item: any) => {
+                    genres.push(new GenreModel(item.id, item.name))
                 });
                 return genres;
             })
@@ -62,10 +65,13 @@ export class BooksPopupComponent implements OnInit {
             id: new FormControl(model ? model.id : ''),
             title: new FormControl(model ? model.title : '', [Validators.required,
                 Validators.maxLength(50)]),
+            description: new FormControl(model ? model.description : ''),
             publishedYear: new FormControl(model ? model.publishedYear : '', Validators.minLength(4)),
             genreId: new FormControl(model ? model.genreId : '', Validators.required),
             authorId: new FormControl(model ? model.authorId : '', Validators.required)
         });
+        this.genreId.setValue(model ? model.genreId : null);
+        this.authorId.setValue(model ? model.authorId : null);
     }
 
     public onSave(): void {
@@ -89,19 +95,15 @@ export class BooksPopupComponent implements OnInit {
 
     private onEdit(model: BookModel): Observable<Object> {
         const index = this.data?.list.findIndex(item => item.id === model.id);
-        const foundModel: BookModel = this.data?.list[index];
-        foundModel.genreId = (<GenreModel>foundModel.genreId).id;
-        foundModel.authorId = (<AuthorModel>foundModel.authorId).id;
-        this.data.list[index] = foundModel;
-        this.data.list = this.data.list.filter((item) => item.id !== foundModel.id);
-        return this.crudService.editItem(BOOKS_URL, foundModel);
+        this.data.list[index] = model;
+        return this.crudService.editItem(BOOKS_URL, model);
     }
 
     private createBook(model: BookModel): Observable<Object> {
         return this.crudService.getLastId(URLS.get(MenuItem.BOOKS) as string).pipe(
             switchMap((id: number) => {
-                const book = new BookModel(++id, model.title, (<GenreModel>model.genreId).id,
-                    model.publishedYear, (<AuthorModel>model.authorId).id);
+                const book = new BookModel(++id, model.title, model.description, model.genreId,
+                    model.publishedYear, model.authorId);
                 this.data.list.push(book);
                 return this.crudService.saveItem(BOOKS_URL, book);
             })
@@ -109,26 +111,21 @@ export class BooksPopupComponent implements OnInit {
     }
 
     public onAuthorChange(model: AuthorModel) {
-        this.setFormValue('authorId', model);
-        this.bookDetailForm.controls['authorId'].setValue(model);
-        this.bookModel.authorId = model;
+        this.setFormValue('authorId', model.id);
     }
 
     private setFormValue(name: string, model: any) {
-        this.bookDetailForm.controls[name].setValue(model);
+        this.bookDetailForm.get(name)?.setValue(model);
     }
 
     public onGenreChange(model: GenreModel) {
-        this.setFormValue('genreId', model);
-        if (!this.bookModel) {
-            const filter = `genreId=${model.id}`;
-            this.filteredAuthors$ = this.filterAuthor(filter);
-        } else if (model.id !== (<GenreModel>this.bookModel.genreId).id) {
-            this.bookDetailForm.controls['authorId'].setValue(null);
+        this.setFormValue('genreId', model.id);
+        if (this.bookModel && model.id !== this.bookModel.genreId) {
+            this.bookDetailForm.get('authorId')?.setValue(null);
             this.bookModel.authorId = null;
-            const filter = `genreId=${model.id}`;
-            this.filteredAuthors$ = this.filterAuthor(filter);
         }
+        const filter = `genreId=${model.id}`;
+        this.filteredAuthors$ = this.filterAuthor(filter);
 
     }
 

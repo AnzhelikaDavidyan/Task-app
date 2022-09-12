@@ -1,127 +1,132 @@
 {
-  "genres": [
-    {
-      "id": 1,
-      "name": "fiction"
-    },
-    {
-      "id": 2,
-      "name": "drama"
-    },
-    {
-      "id": 3,
-      "name": "fantasy"
-    },
-    {
-      "id": 4,
-      "name": "horror"
-    }
-  ],
-  "books": [
-    {
-      "id": 2,
-      "name": "Jane Eyre",
-      "title": "Jane Eyre",
-      "publishedYear": 1997
-    },
-    {
-      "id": 3,
-      "title": "Hamlet",
-      "publishedYear": 1997,
-      "genreId": 2,
-      "authorId": 4
-    },
-    {
-      "id": 4,
-      "title": "Julius Caesar",
-      "publishedYear": 1997,
-      "genreId": 2,
-      "authorId": 4
-    },
-    {
-      "id": 6,
-      "title": "Harry Potter and the Philosopher's Stone",
-      "publishedYear": 1997,
-      "genreId": 3,
-      "authorId": 4
-    },
-    {
-      "id": 7,
-      "title": "Dracula",
-      "publishedYear": 1897,
-      "genreId": 4,
-      "authorId": 4
-    },
-    {
-      "id": 8,
-      "title": "Frankenstein",
-      "publishedYear": 1818,
-      "genreId": 4,
-      "authorId": 4
-    },
-    {
-      "id": 9,
-      "name": "aaa2",
-      "title": "aaa2",
-      "genreId": 1,
-      "publishedYear": "2020",
-      "authorId": 5
-    },
-    {
-      "id": 10,
-      "name": "test3",
-      "title": "test3",
-      "genreId": 4,
-      "publishedYear": "2020",
-      "authorId": 1
-    },
-    {
-      "id": 11,
-      "name": "111",
-      "title": "111",
-      "genreId": 4,
-      "publishedYear": "1111",
-      "authorId": 1
-    },
-    {
-      "id": 12,
-      "name": "test",
-      "title": "test",
-      "genreId": 4,
-      "publishedYear": "2020",
-      "authorId": 1
-    }
-  ],
-  "authors": [
-    {
-      "id": 1,
-      "firstName": "Mary",
-      "lastName": "Shelley",
-      "genreId": 4
-    },
-    {
-      "id": 2,
-      "firstName": "Bram",
-      "lastName": "Stoker",
-      "genreId": 4
-    },
-    {
-      "id": 3,
-      "firstName": "J. K. ",
-      "lastName": "Rowling",
-      "genreId": 3
-    },
-    {
-      "id": 4,
-      "firstName": "Colleen",
-      "lastName": " Hoover",
-      "genreId": 1
-    },
-    {
-      "id": 5,
-      "firstName": "Colleen",
-      "lastName": " Hoover 2",
-      "genreId": 1
-    }
-  ]
+    "genres": [
+        {
+            "id": 1,
+            "name": "fiction"
+        },
+        {
+            "id": 2,
+            "name": "drama"
+        },
+        {
+            "id": 3,
+            "name": "fantasy"
+        },
+        {
+            "id": 4,
+            "name": "horror"
+        }
+    ],
+    "books": [
+        {
+            "id": 1,
+            "title": "It Ends with Us",
+            "description": "lorem ipsum dolor sit",
+            "publishedYear": 2016,
+            "genreId": 1,
+            "authorId": 4
+        },
+        {
+            "id": 2,
+            "title": "Jane Eyre",
+            "description": "lorem ipsum dolor sit",
+            "publishedYear": 1997,
+            "genreId": 1,
+            "authorId": 4
+        },
+        {
+            "id": 3,
+            "title": "Hamlet",
+            "description": "lorem ipsum dolor sit",
+            "publishedYear": 1997,
+            "genreId": 2,
+            "authorId": 4
+        },
+        {
+            "id": 4,
+            "title": "Julius Caesar",
+            "description": "lorem ipsum dolor sit",
+            "publishedYear": 1997,
+            "genreId": 2,
+            "authorId": 4
+        },
+        {
+            "id": 5,
+            "title": "A Game of Thrones",
+            "description": "lorem ipsum dolor sit",
+            "publishedYear": 1997,
+            "genreId": 3,
+            "authorId": 4
+        },
+        {
+            "id": 6,
+            "title": "Harry Potter and the Philosopher's Stone",
+            "description": "lorem ipsum dolor sit",
+            "publishedYear": 1997,
+            "genreId": 3,
+            "authorId": 4
+        },
+        {
+            "id": 7,
+            "title": "Dracula",
+            "description": "lorem ipsum dolor sit",
+            "publishedYear": 1897,
+            "genreId": 4,
+            "authorId": 4
+        },
+        {
+            "id": 8,
+            "title": "Frankenstein",
+            "description": "lorem ipsum dolor sit",
+            "publishedYear": 1818,
+            "genreId": 4,
+            "authorId": 4
+        },
+        {
+            "id": 9,
+            "title": "Anzhelika",
+            "description": "aa",
+            "genreId": 4,
+            "publishedYear": 2002,
+            "authorId": 2
+        }
+    ],
+    "authors": [
+        {
+            "id": 1,
+            "firstName": "Mary",
+            "lastName": "Shelley",
+            "genreId": 4
+        },
+        {
+            "id": 2,
+            "firstName": "Bram",
+            "lastName": "Stoker",
+            "genreId": 4
+        },
+        {
+            "id": 3,
+            "firstName": "J. K. ",
+            "lastName": "Rowling",
+            "genreId": 3
+        },
+        {
+            "id": 4,
+            "firstName": "Colleen",
+            "lastName": " Hoover",
+            "genreId": 1
+        },
+        {
+            "id": 5,
+            "firstName": "Colleen",
+            "lastName": " Hoover 2",
+            "genreId": 1
+        },
+        {
+            "id": 5,
+            "firstName": "Colleen",
+            "lastName": " Hoover 2",
+            "genreId": 1
+        }
+    ]
 }

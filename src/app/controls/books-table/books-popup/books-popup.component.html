@@ -10,15 +10,19 @@
 
             <mat-form-field appearance="outline">
                 <mat-label>Published Year</mat-label>
-                <input matInput formControlName="publishedYear">
+                <input matInput formControlName="publishedYear" type="number">
                 <mat-error>Published Year is required.</mat-error>
             </mat-form-field>
 
+            <mat-form-field appearance="fill">
+                <mat-label>Description</mat-label>
+                <textarea matInput formControlName="description"></textarea>
+            </mat-form-field>
 
             <mat-form-field appearance="outline">
                 <mat-label>Genre</mat-label>
-                <mat-select>
-                    <mat-option *ngFor="let item of genres$ | async" [value]="item"
+                <mat-select [formControl]="genreId">
+                    <mat-option *ngFor="let item of genres$ | async" [value]="item.id"
                                 (onSelectionChange)="onGenreChange(item)">
                         {{item.name }}
 
@@ -29,10 +33,10 @@
 
             <mat-form-field appearance="outline">
                 <mat-label>Author</mat-label>
-                <mat-select formControlName="authorId">
-                    <mat-option *ngFor="let item of filteredAuthors$ | async" [value]="item"
+                <mat-select [formControl]="authorId">
+                    <mat-option *ngFor="let item of filteredAuthors$ | async" [value]="item.id"
                                 (onSelectionChange)="onAuthorChange(item)">
-                        {{item.firstName + item.lastName }}
+                        {{item.firstName + '' + item.lastName }}
                     </mat-option>
                 </mat-select>
                 <mat-error>BBB</mat-error>

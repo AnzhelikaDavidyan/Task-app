@@ -1,9 +1,8 @@
 import {Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges, ViewChild} from '@angular/core';
 import {MatTable, MatTableDataSource} from "@angular/material/table";
-import {BookModel} from "../../books-table/model/book.model";
 import {MatPaginator} from "@angular/material/paginator";
 import {MatSort} from "@angular/material/sort";
-import {DataCommunicationModel, DataCommunicationService} from "../../services/data-communication.service";
+import {DataCommunicationService} from "../../services/data-communication.service";
 
 @Component({
     selector: 'app-table',

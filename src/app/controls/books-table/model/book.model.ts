@@ -1,13 +1,12 @@
 import {EntityModel} from "../../model/entity.model";
-import {GenreModel} from "../../genres-table/model/genre.model";
-import {AuthorModel} from "../../authors-table/model/author.model";
 
 export class BookModel extends EntityModel {
     constructor(public override id: number,
                 public title: string,
-                public genreId: number | GenreModel,
+                public description: string,
+                public genreId: number,
                 public publishedYear: number,
-                public authorId: number | AuthorModel | null) {
-        super(id, title);
+                public authorId: number | null) {
+        super(id);
     }
 }

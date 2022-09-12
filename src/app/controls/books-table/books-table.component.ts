@@ -19,7 +19,7 @@ import {ColumnModel} from "../shared/table/table.component";
 export class BooksTableComponent implements OnInit {
 
     private destroy$ = new Subject();
-    public displayedColumns: string[] = ['id', 'title', 'actions'];
+    public displayedColumns: string[] = ['id', 'title', 'description', 'actions'];
     public columns: ColumnModel[] = [];
     public list: BookModel [] = [];
 
@@ -27,26 +27,27 @@ export class BooksTableComponent implements OnInit {
         private crudService: CrudService,
         private dataCommunicationService: DataCommunicationService,
         public dialog: MatDialog) {
-        this.columns = this.displayedColumns.map((item, index) => {
-            return {id: index, systemName: item, title: item.toUpperCase()} as ColumnModel;
-        });
-        this.getLists()
-            .subscribe(data => {
-                this.list = data;
+        this.columns = this.createColumnModels();
+        this.getBooks()
+            .subscribe(books => {
+                this.list = books;
             });
     }
 
-    private getLists(): Observable<BookModel[]> {
-        return zip(this.crudService.getList(BOOKS_URL),
-            this.crudService.getList(GENRES_URL),
-            this.crudService.getList(AUTHORS_URL))
+    private createColumnModels(): ColumnModel[] {
+        return this.displayedColumns.map((item, index) => {
+            return {id: index, systemName: item, title: item.toUpperCase()} as ColumnModel;
+        });
+    }
+
+    private getBooks(): Observable<BookModel[]> {
+        return this.crudService.getList(BOOKS_URL)
             .pipe(
-                map(([books, genres, authors]: [any, any, any]) => {
+                map((books: any) => {
                     const models: BookModel[] = [];
                     books.forEach((item: BookModel) => {
-                        item.genreId = genres.find((genre: GenreModel) => genre.id === item.genreId);
-                        item.authorId = authors.find((author: AuthorModel) => author.id === item.authorId);
-                        models.push(new BookModel(item.id, item.title, item.genreId, item.publishedYear, item.authorId))
+                        models.push(new BookModel(item.id, item.title, item.description,
+                            item.genreId, item.publishedYear, item.authorId))
                     });
                     return models;
                 }),
