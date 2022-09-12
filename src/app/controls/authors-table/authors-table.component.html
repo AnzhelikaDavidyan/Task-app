@@ -1,1 +1,9 @@
-<p>authors-table works!</p>
+<app-table
+    [displayedColumns]="displayedColumns"
+    [list]="list"
+    [columns]="columns"
+    (add)="add()"
+    (edit)="edit($event)"
+    (delete)="delete($event)"
+>
+</app-table>

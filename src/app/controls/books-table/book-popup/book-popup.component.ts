@@ -14,11 +14,11 @@ import {DataCommunicationService} from "../../services/data-communication.servic
 import {MatOptionSelectionChange} from "@angular/material/core";
 
 @Component({
-    selector: 'app-books-popup',
-    templateUrl: './books-popup.component.html',
-    styleUrls: ['./books-popup.component.css']
+    selector: 'app-book-popup',
+    templateUrl: './book-popup.component.html',
+    styleUrls: ['./book-popup.component.css']
 })
-export class BooksPopupComponent implements OnInit {
+export class BookPopupComponent implements OnInit {
 
     public formGroup!: FormGroup;
     public genres$: Observable<GenreModel[]> = of([]);
@@ -113,8 +113,8 @@ export class BooksPopupComponent implements OnInit {
         }
     }
 
-    private setFormValue(name: string, model: any): void {
-        this.formGroup.get(name)?.setValue(model);
+    private setFormValue(name: string, id: number): void {
+        this.formGroup.get(name)?.setValue(id);
     }
 
     public onGenreChange(event: MatOptionSelectionChange): void {

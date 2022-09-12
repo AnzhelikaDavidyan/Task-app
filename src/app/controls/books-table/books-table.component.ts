@@ -2,7 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {MatDialog} from '@angular/material/dialog';
 import {map, Observable, of, Subject, takeUntil} from 'rxjs';
 import {DeletePopupComponent} from '../shared/delete-popup/delete-popup.component';
-import {BooksPopupComponent} from './books-popup/books-popup.component';
+import {BookPopupComponent} from './book-popup/book-popup.component';
 import {BookModel} from './model/book.model';
 import {CrudService} from "../services/crud.service";
 import {BOOKS_URL} from "../util/url";
@@ -52,7 +52,7 @@ export class BooksTableComponent implements OnInit {
     }
 
     public addBook() {
-        this.dialog.open(BooksPopupComponent, {
+        this.dialog.open(BookPopupComponent, {
             data: {
                 isNew: true,
                 list: this.list,
@@ -66,7 +66,7 @@ export class BooksTableComponent implements OnInit {
     }
 
     public editBook([event, model]: [MouseEvent, BookModel]) {
-        this.dialog.open(BooksPopupComponent, {
+        this.dialog.open(BookPopupComponent, {
             data: {
                 title: 'Edit Book',
                 list: this.list,
