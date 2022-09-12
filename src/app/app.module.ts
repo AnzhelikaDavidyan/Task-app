@@ -1,25 +1,25 @@
-import { HttpClientModule } from '@angular/common/http';
-import { NgModule } from '@angular/core';
-import { ReactiveFormsModule } from '@angular/forms';
-import { BrowserModule } from '@angular/platform-browser';
+import {HttpClientModule} from '@angular/common/http';
+import {NgModule} from '@angular/core';
+import {ReactiveFormsModule} from '@angular/forms';
+import {BrowserModule} from '@angular/platform-browser';
 
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { AppRoutingModule } from './app-routing.module';
-import { AppComponent } from './app.component';
-import { BooksPopupComponent } from './controls/books-table/books-popup/books-popup.component';
-import { BooksTableComponent } from './controls/books-table/books-table.component';
-import { HeaderComponent } from './controls/header/header.component';
-import { SharedModule } from './controls/shared/shared.module';
-import { MaterialModule } from './material.module';
+import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
+import {AppRoutingModule} from './app-routing.module';
+import {AppComponent} from './app.component';
+import {BooksPopupComponent} from './controls/books-table/books-popup/books-popup.component';
+import {BooksTableComponent} from './controls/books-table/books-table.component';
+import {HeaderComponent} from './controls/header/header.component';
+import {SharedModule} from './controls/shared/shared.module';
+import {MaterialModule} from './material.module';
 import {MatSortModule} from "@angular/material/sort";
 
 @NgModule({
-  declarations: [
-    AppComponent,
-    HeaderComponent,
-    BooksTableComponent,
-    BooksPopupComponent
-  ],
+    declarations: [
+        AppComponent,
+        HeaderComponent,
+        BooksTableComponent,
+        BooksPopupComponent
+    ],
     imports: [
         BrowserModule,
         HttpClientModule,
@@ -30,8 +30,8 @@ import {MatSortModule} from "@angular/material/sort";
         SharedModule,
         MatSortModule
     ],
-  providers: [],
-  entryComponents: [BooksPopupComponent],
-  bootstrap: [AppComponent]
+    providers: [],
+    bootstrap: [AppComponent]
 })
-export class AppModule { }
+export class AppModule {
+}

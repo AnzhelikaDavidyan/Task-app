@@ -10,7 +10,6 @@ import {CrudService} from "../../services/crud.service";
 import {MenuItem} from "../../util/menu.enum";
 import {AUTHORS_URL, BOOKS_URL, GENRES_URL, URLS} from "../../util/url";
 import {EntityModel} from "../../model/entity.model";
-import {MatTable} from "@angular/material/table";
 import {DataCommunicationService} from "../../services/data-communication.service";
 import {MatOptionSelectionChange} from "@angular/material/core";
 
@@ -21,7 +20,7 @@ import {MatOptionSelectionChange} from "@angular/material/core";
 })
 export class BooksPopupComponent implements OnInit {
 
-    public bookDetailForm!: FormGroup;
+    public formGroup!: FormGroup;
     public genres$: Observable<GenreModel[]> = of([]);
     public filteredAuthors$: Observable<AuthorModel[]> = of([]);
     public bookModel!: BookModel;
@@ -34,19 +33,15 @@ export class BooksPopupComponent implements OnInit {
                 private dataCommunicationService: DataCommunicationService,
                 public dialogRef: MatDialogRef<DeletePopupComponent>,
                 @Inject(MAT_DIALOG_DATA) public data: {
-                    model: BookModel, list: any[], table: MatTable<any>,
-                    isNew: boolean, title: string
+                    model: BookModel, list: any[], isNew: boolean, title: string
                 }) {
         this.bookModel = this.data.model;
-        this.initForm(this.data.model);
+        this.initForm(this.bookModel);
     }
 
 
     public ngOnInit(): void {
         this.genres$ = this.getGenres() as Observable<GenreModel[]>;
-        this.bookDetailForm.valueChanges.subscribe(changes => {
-            console.log(changes)
-        })
     }
 
     private getGenres(): Observable<GenreModel[]> {
@@ -62,7 +57,7 @@ export class BooksPopupComponent implements OnInit {
     }
 
     private initForm(model?: BookModel): void {
-        this.bookDetailForm = this.formBuilder.group({
+        this.formGroup = this.formBuilder.group({
             id: new FormControl(model ? model.id : ''),
             title: new FormControl(model ? model.title : '', [Validators.required,
                 Validators.maxLength(50)]),
@@ -71,13 +66,13 @@ export class BooksPopupComponent implements OnInit {
             genreId: new FormControl(model ? model.genreId : '', Validators.required),
             authorId: new FormControl(model ? model.authorId : '', Validators.required)
         });
-        this.genreId = this.bookDetailForm.get('genreId') as FormControl;
-        this.authorId = this.bookDetailForm.get('authorId') as FormControl;
+        this.genreId = this.formGroup.get('genreId') as FormControl;
+        this.authorId = this.formGroup.get('authorId') as FormControl;
     }
 
     public onSave(): void {
-        const model = this.bookDetailForm.value;
-        if (this.bookDetailForm.valid) {
+        const model = this.formGroup.value;
+        if (this.formGroup.valid) {
             if (this.data.isNew) {
                 this.createBook(model).subscribe({
                     next: () => {
@@ -119,7 +114,7 @@ export class BooksPopupComponent implements OnInit {
     }
 
     private setFormValue(name: string, model: any): void {
-        this.bookDetailForm.get(name)?.setValue(model);
+        this.formGroup.get(name)?.setValue(model);
     }
 
     public onGenreChange(event: MatOptionSelectionChange): void {
@@ -127,7 +122,7 @@ export class BooksPopupComponent implements OnInit {
             const genreId = event.source.value;
             this.setFormValue('genreId', genreId);
             if (this.bookModel && genreId !== this.bookModel.genreId) {
-                this.bookDetailForm.get('authorId')?.setValue(null);
+                this.formGroup.get('authorId')?.setValue(null);
                 this.bookModel.authorId = null;
             }
             this.initFilteredAuthors(genreId);
@@ -153,8 +148,5 @@ export class BooksPopupComponent implements OnInit {
         );
     }
 
-    onComboChange(item: EntityModel) {
-        console.log(item);
-    }
 }
 

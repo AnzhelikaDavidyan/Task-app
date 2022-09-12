@@ -1,15 +1,14 @@
 import {Component, OnInit} from '@angular/core';
 import {MatDialog} from '@angular/material/dialog';
-import {map, Observable, of, Subject, takeUntil, zip} from 'rxjs';
+import {map, Observable, of, Subject, takeUntil} from 'rxjs';
 import {DeletePopupComponent} from '../shared/delete-popup/delete-popup.component';
 import {BooksPopupComponent} from './books-popup/books-popup.component';
 import {BookModel} from './model/book.model';
 import {CrudService} from "../services/crud.service";
-import {AUTHORS_URL, BOOKS_URL, GENRES_URL} from "../util/url";
+import {BOOKS_URL} from "../util/url";
 import {DataCommunicationModel, DataCommunicationService} from "../services/data-communication.service";
-import {GenreModel} from "../genres-table/model/genre.model";
-import {AuthorModel} from "../authors-table/model/author.model";
 import {ColumnModel} from "../shared/table/table.component";
+import {createColumnModels, PopupInfo} from "../shared/util/table.util";
 
 @Component({
     selector: 'app-books-table',
@@ -27,17 +26,11 @@ export class BooksTableComponent implements OnInit {
         private crudService: CrudService,
         private dataCommunicationService: DataCommunicationService,
         public dialog: MatDialog) {
-        this.columns = this.createColumnModels();
+        this.columns = createColumnModels(this.displayedColumns);
         this.getBooks()
             .subscribe(books => {
                 this.list = books;
             });
-    }
-
-    private createColumnModels(): ColumnModel[] {
-        return this.displayedColumns.map((item, index) => {
-            return {id: index, systemName: item, title: item.toUpperCase()} as ColumnModel;
-        });
     }
 
     private getBooks(): Observable<BookModel[]> {
@@ -59,12 +52,12 @@ export class BooksTableComponent implements OnInit {
     }
 
     public addBook() {
-        const dialogRef = this.dialog.open(BooksPopupComponent, {
+        this.dialog.open(BooksPopupComponent, {
             data: {
                 isNew: true,
                 list: this.list,
                 title: 'Add Book'
-            },
+            } as PopupInfo,
             disableClose: true,
             autoFocus: false,
             width: '400px',
@@ -73,12 +66,12 @@ export class BooksTableComponent implements OnInit {
     }
 
     public editBook([event, model]: [MouseEvent, BookModel]) {
-        const dialogRef = this.dialog.open(BooksPopupComponent, {
+        this.dialog.open(BooksPopupComponent, {
             data: {
-                model,
+                title: 'Edit Book',
                 list: this.list,
-                title: 'Edit Book'
-            },
+                model,
+            } as PopupInfo,
             disableClose: true,
             autoFocus: false,
             width: '400px',
@@ -87,11 +80,7 @@ export class BooksTableComponent implements OnInit {
     }
 
     public deleteBook(book: BookModel) {
-        const dialogRef = this.dialog.open(DeletePopupComponent, {
-            data: {
-                item: book
-            }
-        });
+        const dialogRef = this.dialog.open(DeletePopupComponent);
         dialogRef.afterClosed().subscribe(status => {
             if (status) {
                 this.removeAction(book).subscribe({

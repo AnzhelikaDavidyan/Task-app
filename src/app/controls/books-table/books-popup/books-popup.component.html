@@ -1,7 +1,7 @@
 <h1 mat-dialog-title>{{data.title}}</h1>
 <mat-dialog-content>
     <section>
-        <form [formGroup]="bookDetailForm">
+        <form [formGroup]="formGroup">
             <mat-form-field appearance="outline">
                 <mat-label>Title</mat-label>
                 <input matInput formControlName="title">
@@ -40,23 +40,6 @@
                 </mat-select>
                 <mat-error>BBB</mat-error>
             </mat-form-field>
-            <!--            <app-combo-box-->
-            <!--                [label]="'Genre'"-->
-            <!--                [list]="genres$ | async"-->
-            <!--                [errorMessages]="['Genre is required.']"-->
-            <!--                (onModelChange)="onGenreChange($event)"-->
-            <!--                [parentGroup]="bookDetailForm"-->
-            <!--                [formControlName]="'genreId'">-->
-            <!--            </app-combo-box>-->
-
-            <!--            <app-combo-box-->
-            <!--                [label]="'Author'"-->
-            <!--                [list]="filteredAuthors$ | async"-->
-            <!--                [nameField]="'firstName'"-->
-            <!--                [errorMessages]="['Author is required.']"-->
-            <!--                (onModelChange)="onAuthorChange($event)"-->
-            <!--                [parentGroup]="bookDetailForm">-->
-            <!--            </app-combo-box>-->
         </form>
 
     </section>
@@ -64,6 +47,6 @@
 <mat-dialog-actions align="end">
     <button mat-button mat-dialog-close>Cancel</button>
     <button mat-button [mat-dialog-close]="true" cdkFocusInitial (click)="onSave()"
-            [disabled]="!bookDetailForm.valid">Save
+            [disabled]="!formGroup.valid">Save
     </button>
 </mat-dialog-actions>
