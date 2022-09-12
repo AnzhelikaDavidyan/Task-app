@@ -12,6 +12,7 @@ import {AUTHORS_URL, BOOKS_URL, GENRES_URL, URLS} from "../../util/url";
 import {EntityModel} from "../../model/entity.model";
 import {DataCommunicationService} from "../../services/data-communication.service";
 import {MatOptionSelectionChange} from "@angular/material/core";
+import {isPositive} from "../../shared/util/validators.util";
 
 @Component({
     selector: 'app-book-popup',
@@ -61,8 +62,10 @@ export class BookPopupComponent implements OnInit {
             id: new FormControl(model ? model.id : ''),
             title: new FormControl(model ? model.title : '', [Validators.required,
                 Validators.maxLength(50)]),
-            description: new FormControl(model ? model.description : ''),
-            publishedYear: new FormControl(model ? model.publishedYear : '', Validators.minLength(4)),
+            description: new FormControl(model ? model.description : '',
+                [Validators.maxLength(100)]),
+            publishedYear: new FormControl(model ? model.publishedYear : '',
+                [Validators.minLength(4), isPositive]),
             genreId: new FormControl(model ? model.genreId : '', Validators.required),
             authorId: new FormControl(model ? model.authorId : '', Validators.required)
         });
