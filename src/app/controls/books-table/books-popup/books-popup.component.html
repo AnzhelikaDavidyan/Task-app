@@ -23,9 +23,8 @@
                 <mat-label>Genre</mat-label>
                 <mat-select [formControl]="genreId">
                     <mat-option *ngFor="let item of genres$ | async" [value]="item.id"
-                                (onSelectionChange)="onGenreChange(item)">
+                                (onSelectionChange)="onGenreChange($event)">
                         {{item.name }}
-
                     </mat-option>
                 </mat-select>
                 <mat-error>AAA</mat-error>
@@ -35,8 +34,8 @@
                 <mat-label>Author</mat-label>
                 <mat-select [formControl]="authorId">
                     <mat-option *ngFor="let item of filteredAuthors$ | async" [value]="item.id"
-                                (onSelectionChange)="onAuthorChange(item)">
-                        {{item.firstName + '' + item.lastName }}
+                                (onSelectionChange)="onAuthorChange($event)">
+                        {{item.firstName + ' ' + item.lastName }}
                     </mat-option>
                 </mat-select>
                 <mat-error>BBB</mat-error>

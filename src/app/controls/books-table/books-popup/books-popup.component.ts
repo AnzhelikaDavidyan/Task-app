@@ -12,6 +12,7 @@ import {AUTHORS_URL, BOOKS_URL, GENRES_URL, URLS} from "../../util/url";
 import {EntityModel} from "../../model/entity.model";
 import {MatTable} from "@angular/material/table";
 import {DataCommunicationService} from "../../services/data-communication.service";
+import {MatOptionSelectionChange} from "@angular/material/core";
 
 @Component({
     selector: 'app-books-popup',
@@ -25,8 +26,8 @@ export class BooksPopupComponent implements OnInit {
     public filteredAuthors$: Observable<AuthorModel[]> = of([]);
     public bookModel!: BookModel;
 
-    public genreId = new FormControl<number>(0);
-    public authorId = new FormControl<number>(0);
+    public genreId!: FormControl;
+    public authorId!: FormControl;
 
     constructor(private formBuilder: FormBuilder,
                 private crudService: CrudService,
@@ -70,8 +71,8 @@ export class BooksPopupComponent implements OnInit {
             genreId: new FormControl(model ? model.genreId : '', Validators.required),
             authorId: new FormControl(model ? model.authorId : '', Validators.required)
         });
-        this.genreId.setValue(model ? model.genreId : null);
-        this.authorId.setValue(model ? model.authorId : null);
+        this.genreId = this.bookDetailForm.get('genreId') as FormControl;
+        this.authorId = this.bookDetailForm.get('authorId') as FormControl;
     }
 
     public onSave(): void {
@@ -110,23 +111,34 @@ export class BooksPopupComponent implements OnInit {
         );
     }
 
-    public onAuthorChange(model: AuthorModel) {
-        this.setFormValue('authorId', model.id);
+    public onAuthorChange(event: MatOptionSelectionChange) {
+        if (event.isUserInput) {
+            const authorId = event.source.value;
+            this.setFormValue('authorId', authorId);
+        }
     }
 
-    private setFormValue(name: string, model: any) {
+    private setFormValue(name: string, model: any): void {
         this.bookDetailForm.get(name)?.setValue(model);
     }
 
-    public onGenreChange(model: GenreModel) {
-        this.setFormValue('genreId', model.id);
-        if (this.bookModel && model.id !== this.bookModel.genreId) {
-            this.bookDetailForm.get('authorId')?.setValue(null);
-            this.bookModel.authorId = null;
+    public onGenreChange(event: MatOptionSelectionChange): void {
+        if (event.isUserInput) {
+            const genreId = event.source.value;
+            this.setFormValue('genreId', genreId);
+            if (this.bookModel && genreId !== this.bookModel.genreId) {
+                this.bookDetailForm.get('authorId')?.setValue(null);
+                this.bookModel.authorId = null;
+            }
+            this.initFilteredAuthors(genreId);
+        } else {
+            this.initFilteredAuthors(this.bookModel.genreId);
         }
-        const filter = `genreId=${model.id}`;
-        this.filteredAuthors$ = this.filterAuthor(filter);
+    }
 
+    private initFilteredAuthors(genreId: number): void {
+        const filter = `genreId=${genreId}`;
+        this.filteredAuthors$ = this.filterAuthor(filter);
     }
 
     private filterAuthor(filter: string): Observable<any[]> {
