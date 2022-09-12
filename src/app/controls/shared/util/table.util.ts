@@ -1,20 +1,16 @@
-import {ColumnModel} from "../table/table.component";
-import {EntityModel} from "../../model/entity.model";
-import {GenreModel} from "../../genres-table/model/genre.model";
-import {BookModel} from "../../books-table/model/book.model";
-import {AuthorModel} from "../../authors-table/model/author.model";
+import {TypeEnum} from "../enum/type.enum";
 
-export function createColumnModels(displayedColumns: string[]) {
-    return displayedColumns.map((item, index) => {
-        return {id: index, systemName: item, title: item.toUpperCase()} as ColumnModel;
-    });
+
+export class ColumnModel {
+    constructor(public systemName: string, public type: TypeEnum, public title: string,
+                public URL?: string) {
+
+    }
 }
 
 export interface PopupInfo {
     isNew: boolean;
     title: string;
-    model: CommonModel;
-    list: CommonModel[];
+    model: any;
+    list: any[];
 }
-
-export type CommonModel = GenreModel | BookModel | AuthorModel;

@@ -7,8 +7,8 @@ import {BookModel} from './model/book.model';
 import {CrudService} from "../services/crud.service";
 import {BOOKS_URL} from "../util/url";
 import {DataCommunicationModel, DataCommunicationService} from "../services/data-communication.service";
-import {ColumnModel} from "../shared/table/table.component";
-import {createColumnModels, PopupInfo} from "../shared/util/table.util";
+import {ColumnModel, PopupInfo} from "../shared/util/table.util";
+import {TypeEnum} from "../shared/enum/type.enum";
 
 @Component({
     selector: 'app-books-table',
@@ -18,15 +18,19 @@ import {createColumnModels, PopupInfo} from "../shared/util/table.util";
 export class BooksTableComponent implements OnInit {
 
     private destroy$ = new Subject();
+    public columns: ColumnModel[] = [
+        new ColumnModel('id', TypeEnum.NUMBER, 'ID'),
+        new ColumnModel('title', TypeEnum.STRING, 'Title'),
+        new ColumnModel('description', TypeEnum.STRING, 'Description'),
+        new ColumnModel('actions', TypeEnum.ACTIONS, 'Actions'),
+    ];
     public displayedColumns: string[] = ['id', 'title', 'description', 'actions'];
-    public columns: ColumnModel[] = [];
     public list: BookModel [] = [];
 
     constructor(
         private crudService: CrudService,
         private dataCommunicationService: DataCommunicationService,
         public dialog: MatDialog) {
-        this.columns = createColumnModels(this.displayedColumns);
         this.getBooks()
             .subscribe(books => {
                 this.list = books;

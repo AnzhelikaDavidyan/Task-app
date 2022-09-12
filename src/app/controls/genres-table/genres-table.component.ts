@@ -5,11 +5,11 @@ import {GenreModel} from "./model/genre.model";
 import {CrudService} from "../services/crud.service";
 import {MatDialog} from "@angular/material/dialog";
 import {GENRES_URL} from "../util/url";
-import {ColumnModel} from "../shared/table/table.component";
-import {createColumnModels, PopupInfo} from "../shared/util/table.util";
+import {ColumnModel, PopupInfo} from "../shared/util/table.util";
 import {DeletePopupComponent} from "../shared/delete-popup/delete-popup.component";
 import {DataCommunicationModel, DataCommunicationService} from "../services/data-communication.service";
 import {GenrePopupComponent} from "./genre-popup/genre-popup.component";
+import {TypeEnum} from "../shared/enum/type.enum";
 
 @Component({
     selector: 'app-genres-table',
@@ -20,7 +20,10 @@ export class GenresTableComponent implements OnInit {
 
     private destroy$ = new Subject();
     public displayedColumns: string[] = ['id', 'name', 'actions'];
-    public columns: ColumnModel[] = [];
+    public columns: ColumnModel[] = [
+        new ColumnModel('id', TypeEnum.NUMBER, 'ID'),
+        new ColumnModel('name', TypeEnum.STRING, 'Name'),
+        new ColumnModel('actions', TypeEnum.ACTIONS, 'Actions'),];
     public list: GenreModel [] = [];
 
     @ViewChild(MatTable) table!: MatTable<any>;
@@ -28,7 +31,6 @@ export class GenresTableComponent implements OnInit {
     constructor(private crudService: CrudService,
                 private dataCommunicationService: DataCommunicationService,
                 public dialog: MatDialog) {
-        this.columns = createColumnModels(this.displayedColumns);
         this.getGenres()
             .subscribe(genres => {
                 this.list = genres;

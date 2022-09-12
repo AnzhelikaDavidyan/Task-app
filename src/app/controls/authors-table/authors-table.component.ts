@@ -1,15 +1,15 @@
 import {Component, OnInit} from '@angular/core';
 import {map, Observable, of, Subject, takeUntil} from "rxjs";
-import {ColumnModel} from "../shared/table/table.component";
 import {GenreModel} from "../genres-table/model/genre.model";
 import {AuthorModel} from "./model/author.model";
-import {createColumnModels, PopupInfo} from "../shared/util/table.util";
+import {ColumnModel, PopupInfo} from "../shared/util/table.util";
 import {CrudService} from "../services/crud.service";
 import {DataCommunicationModel, DataCommunicationService} from "../services/data-communication.service";
 import {MatDialog} from "@angular/material/dialog";
-import {AUTHORS_URL} from "../util/url";
+import {AUTHORS_URL, GENRES_URL} from "../util/url";
 import {DeletePopupComponent} from "../shared/delete-popup/delete-popup.component";
 import {AuthorPopupComponent} from "./author-popup/author-popup.component";
+import {TypeEnum} from "../shared/enum/type.enum";
 
 @Component({
     selector: 'app-authors-table',
@@ -20,7 +20,13 @@ export class AuthorsTableComponent implements OnInit {
 
     private destroy$ = new Subject();
     public displayedColumns: string[] = ['id', 'firstName', 'lastName', 'genreId', 'actions'];
-    public columns: ColumnModel[] = [];
+    public columns: ColumnModel[] = [
+        new ColumnModel('id', TypeEnum.NUMBER, 'ID'),
+        new ColumnModel('firstName', TypeEnum.STRING, 'First Name'),
+        new ColumnModel('lastName', TypeEnum.STRING, 'Last Name'),
+        new ColumnModel('genreId', TypeEnum.CLASSIFIER, 'Genre', GENRES_URL),
+        new ColumnModel('actions', TypeEnum.ACTIONS, 'Actions'),
+    ];
     public list: AuthorModel [] = [];
 
     constructor(private crudService: CrudService,
@@ -29,7 +35,6 @@ export class AuthorsTableComponent implements OnInit {
     }
 
     ngOnInit(): void {
-        this.columns = createColumnModels(this.displayedColumns);
         this.getAuthors()
             .subscribe(authors => {
                 this.list = authors;

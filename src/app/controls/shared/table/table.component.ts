@@ -3,6 +3,8 @@ import {MatTable, MatTableDataSource} from "@angular/material/table";
 import {MatPaginator} from "@angular/material/paginator";
 import {MatSort} from "@angular/material/sort";
 import {DataCommunicationService} from "../../services/data-communication.service";
+import {ColumnModel} from "../util/table.util";
+import {TypeEnum} from "../enum/type.enum";
 
 @Component({
     selector: 'app-table',
@@ -15,6 +17,7 @@ export class TableComponent implements OnInit, OnChanges {
     @Input() public displayedColumns!: string[];
     @Input() public columns: ColumnModel[] = [];
 
+    public readonly TYPES = TypeEnum;
     @Output() public add: EventEmitter<void> = new EventEmitter<void>();
     @Output() public edit: EventEmitter<[MouseEvent, any]> = new EventEmitter<[MouseEvent, any]>();
     @Output() public delete: EventEmitter<any> = new EventEmitter<any>();
@@ -71,10 +74,4 @@ export class TableComponent implements OnInit, OnChanges {
             this.dataSource.paginator.firstPage();
         }
     }
-}
-
-export interface ColumnModel {
-    id: number;
-    systemName: string;
-    title: string;
 }

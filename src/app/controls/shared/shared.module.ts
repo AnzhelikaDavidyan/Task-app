@@ -5,12 +5,14 @@ import {ComboBoxComponent} from './combo-box/combo-box.component';
 import {CommonModule} from "@angular/common";
 import {ReactiveFormsModule} from "@angular/forms";
 import {TableComponent} from './table/table.component';
+import { ReadClassifierPipe } from './pipe/read-classifier.pipe';
 
 @NgModule({
     declarations: [
         DeletePopupComponent,
         ComboBoxComponent,
-        TableComponent
+        TableComponent,
+        ReadClassifierPipe
     ],
     imports: [
         MaterialModule,
