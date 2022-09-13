@@ -22,8 +22,8 @@
       "id": 1,
       "title": "It Ends with Us",
       "description": "lorem ipsum dolor sit",
-      "genreId": 1,
       "publishedYear": 2016,
+      "genreId": 1,
       "authorId": 4
     },
     {

@@ -64,7 +64,6 @@ export class TableComponent implements OnInit, OnChanges {
                             const index = this.list.findIndex(item => item.id === res.model.id);
                             this.list[index] = res.model;
                         }
-                        this.table.renderRows();
                         this.dataSource._updateChangeSubscription();
                     }
                 }
