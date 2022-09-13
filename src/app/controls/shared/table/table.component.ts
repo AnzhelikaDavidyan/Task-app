@@ -39,7 +39,7 @@ export class TableComponent implements OnInit, OnChanges {
     @ViewChild(MatSort) sort!: MatSort | null;
     @ViewChild(MatTable) table!: MatTable<any>;
 
-    public dataSource!: MatTableDataSource<any>;
+    public dataSource!: MatTableDataSource<EntityModel[]>;
 
     constructor(private dataCommunicationService: DataCommunicationService) {
     }
