@@ -11,6 +11,12 @@ export class ColumnModel {
 export interface PopupInfo {
     isNew: boolean;
     title: string;
+    message: string;
     model: any;
     list: any[];
+}
+
+export interface RelatedDataI {
+    filter: string;
+    urls: string[];
 }

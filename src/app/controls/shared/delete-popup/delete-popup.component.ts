@@ -11,8 +11,13 @@ export class DeletePopupComponent implements OnInit {
 
     constructor(public dialogRef: MatDialogRef<DeletePopupComponent>,
                 @Inject(MAT_DIALOG_DATA) public data: {
-                    title: string;
-                    message: string;
+                    title: string,
+                    message: string,
+                    yesAction: Function,
+                    yesArgs: any[],
+                    noAction: Function,
+                    noArgs: any[],
+                    context: any,
                 }) {
 
     }
@@ -21,10 +26,25 @@ export class DeletePopupComponent implements OnInit {
     }
 
     public noAction() {
-        this.dialogRef.close(false);
+        if (this.data.noAction) {
+            this.data.noAction.apply(this.data.context, this.data.noArgs);
+        }
+        this.close(false);
     }
 
     public yesAction() {
-        this.dialogRef.close(true);
+        if (this.data.yesAction) {
+            this.data.yesAction.apply(this.data.context, this.data.yesArgs);
+        }
+        this.close(true);
     }
+
+    private close(yesNo: boolean): void {
+        this.dialogRef.close(yesNo);
+    }
+}
+
+export interface DeletePopupI {
+    title: string;
+    message: string;
 }

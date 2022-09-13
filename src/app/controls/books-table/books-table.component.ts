@@ -1,14 +1,15 @@
 import {Component, OnInit} from '@angular/core';
 import {MatDialog} from '@angular/material/dialog';
-import {map, Observable, of, Subject, takeUntil} from 'rxjs';
-import {DeletePopupComponent} from '../shared/delete-popup/delete-popup.component';
+import {Subject, takeUntil} from 'rxjs';
+import {DeletePopupI} from '../shared/delete-popup/delete-popup.component';
 import {BookPopupComponent} from './book-popup/book-popup.component';
 import {BookModel} from './model/book.model';
 import {CrudService} from "../services/crud.service";
-import {BOOKS_URL} from "../util/url";
-import {DataCommunicationModel, DataCommunicationService} from "../services/data-communication.service";
+import {BOOKS_URL, GENRES_URL} from "../util/url";
+import {DataCommunicationService} from "../services/data-communication.service";
 import {ColumnModel, PopupInfo} from "../shared/util/table.util";
 import {TypeEnum} from "../shared/enum/type.enum";
+import {TableService} from "../shared/table/service/table.service";
 
 @Component({
     selector: 'app-books-table',
@@ -28,34 +29,21 @@ export class BooksTableComponent implements OnInit {
     public list: BookModel [] = [];
 
     constructor(
-        private crudService: CrudService,
-        private dataCommunicationService: DataCommunicationService,
-        public dialog: MatDialog) {
-        this.getBooks()
-            .subscribe(books => {
-                this.list = books;
-            });
-    }
-
-    private getBooks(): Observable<BookModel[]> {
-        return this.crudService.getList(BOOKS_URL)
-            .pipe(
-                map((books: any) => {
-                    const models: BookModel[] = [];
-                    books.forEach((item: BookModel) => {
-                        models.push(new BookModel(item.id, item.title, item.description,
-                            item.genreId, item.publishedYear, item.authorId))
-                    });
-                    return models;
-                }),
-                takeUntil(this.destroy$)
-            );
+        public dialog: MatDialog,
+        public tableService: TableService) {
     }
 
     ngOnInit(): void {
+        this.tableService.getList(BOOKS_URL).pipe(
+            takeUntil(this.destroy$)
+        ).subscribe({
+            next: (books: any[]) => {
+                this.list = books;
+            }
+        });
     }
 
-    public addBook() {
+    public add() {
         this.dialog.open(BookPopupComponent, {
             data: {
                 isNew: true,
@@ -69,7 +57,7 @@ export class BooksTableComponent implements OnInit {
         });
     }
 
-    public editBook([event, model]: [MouseEvent, BookModel]) {
+    public edit([event, model]: [MouseEvent, BookModel]) {
         this.dialog.open(BookPopupComponent, {
             data: {
                 title: 'Edit Book',
@@ -83,34 +71,12 @@ export class BooksTableComponent implements OnInit {
         });
     }
 
-    public deleteBook(book: BookModel) {
-        const dialogRef = this.dialog.open(DeletePopupComponent, {
-            data: {
-                title: 'Removing an Item',
-                message: ' Are you sure you want to remove the selected Item(s) ?'
-            }
-        });
-        dialogRef.afterClosed().subscribe(status => {
-            if (status) {
-                this.removeAction(book).subscribe({
-                    next: () => {
-                        this.dataCommunicationService.notify({isDeleted: true} as DataCommunicationModel)
-                    }
-                });
-            }
-        });
-    }
-
-    private removeAction(book: BookModel): Observable<boolean> {
-        const data = this.list;
-        const index = data.indexOf(book);
-        if (index > -1) {
-            this.list.splice(index, 1);
-            return this.crudService.removeItem(BOOKS_URL, book).pipe(
-                map(() => true)
-            );
-        }
-        return of(false);
+    public delete(model: BookModel) {
+        const popupInfo = {
+            title: 'Removing an Item',
+            message: ' Are you sure you want to remove the selected Item(s) ?'
+        } as DeletePopupI;
+        this.tableService.deleteItem(BOOKS_URL, model, this.list, popupInfo);
     }
 
     public ngOnDestroy(): void {
