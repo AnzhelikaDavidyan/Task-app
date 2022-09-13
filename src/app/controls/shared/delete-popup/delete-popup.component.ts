@@ -1,7 +1,16 @@
 import {Component, Inject, OnInit} from '@angular/core';
 import {MatDialogRef, MAT_DIALOG_DATA} from '@angular/material/dialog';
+import {MaterialModule} from "../../../material.module";
+import {CommonModule} from "@angular/common";
+import {ReactiveFormsModule} from "@angular/forms";
 
 @Component({
+    standalone: true,
+    imports: [
+        MaterialModule,
+        CommonModule,
+        ReactiveFormsModule
+    ],
     selector: 'app-delete-popup',
     templateUrl: './delete-popup.component.html',
     styleUrls: ['./delete-popup.component.css']

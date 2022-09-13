@@ -4,6 +4,7 @@ import {map, Observable, of} from "rxjs";
 import {ColumnModel} from "../util/table.util";
 
 @Pipe({
+    standalone: true,
     name: 'readClassifier'
 })
 export class ReadClassifierPipe implements PipeTransform {

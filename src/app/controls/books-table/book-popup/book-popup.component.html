@@ -17,6 +17,9 @@
                 <mat-error *ngIf="formGroup.get('publishedYear')?.hasError('isNegative')">
                     Published Year must be positive.
                 </mat-error>
+                <mat-error *ngIf="formGroup.get('publishedYear')?.hasError('characterCount')">
+                    Published Year must have {{formGroup.get('publishedYear')?.errors?.['requiredValue']}} character.
+                </mat-error>
             </mat-form-field>
 
             <mat-form-field appearance="fill">

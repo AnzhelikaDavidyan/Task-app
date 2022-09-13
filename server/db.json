@@ -2,7 +2,7 @@
   "genres": [
     {
       "id": 1,
-      "name": "fiction 2"
+      "name": "fiction"
     },
     {
       "id": 2,
@@ -15,18 +15,6 @@
     {
       "id": 4,
       "name": "horror"
-    },
-    {
-      "id": 5,
-      "name": "AAA"
-    },
-    {
-      "id": 6,
-      "name": "BBB"
-    },
-    {
-      "id": 7,
-      "name": "111"
     }
   ],
   "books": [
@@ -93,14 +81,6 @@
       "publishedYear": 1818,
       "genreId": 4,
       "authorId": 1
-    },
-    {
-      "id": 9,
-      "title": "Anz",
-      "description": "afsafasd",
-      "publishedYear": 2000,
-      "genreId": 1,
-      "authorId": 8
     }
   ],
   "authors": [
@@ -151,12 +131,6 @@
       "firstName": "Charlotte",
       "lastName": "Brontë",
       "genreId": 1
-    },
-    {
-      "id": 10,
-      "firstName": "Anzhelika`",
-      "lastName": "Davidyan",
-      "genreId": 5
     }
   ]
 }

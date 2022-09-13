@@ -4,15 +4,17 @@ import {GenreRoutingModule} from "./genre-routing.module";
 import {GenresTableComponent} from "./genres-table.component";
 import {GenrePopupComponent} from './genre-popup/genre-popup.component';
 import {MaterialModule} from "../../material.module";
-import {SharedModule} from "../shared/shared.module";
 import {ReactiveFormsModule} from "@angular/forms";
+import {DeletePopupComponent} from "../shared/delete-popup/delete-popup.component";
+import {TableComponent} from "../shared/table/table.component";
 
 @NgModule({
     imports: [
         CommonModule,
         GenreRoutingModule,
         MaterialModule,
-        SharedModule,
+        DeletePopupComponent,
+        TableComponent,
         ReactiveFormsModule
     ],
     declarations: [GenresTableComponent, GenrePopupComponent],

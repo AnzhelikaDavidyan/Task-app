@@ -58,9 +58,8 @@ export class AuthorPopupComponent implements OnInit {
                 this.dataService.createItem(AUTHORS_URL, model).subscribe({
                     next: () => {
                         const authorModel = new AuthorModel(model.id, model.firstName, model.lastName, model.genreId);
-                        this.data.list.push(authorModel);
                         this.dataCommunicationService.notify({
-                            model,
+                            model: authorModel,
                             isCreated: true,
                             isEdited: false,
                             isDeleted: false

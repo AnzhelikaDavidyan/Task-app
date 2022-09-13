@@ -50,7 +50,6 @@ export class GenrePopupComponent implements OnInit {
                 this.dataService.createItem(GENRES_URL, model).subscribe({
                     next: () => {
                         const genre = new GenreModel(model.id, model.name);
-                        // this.data.list.push(genre);
                         this.dataCommunicationService.notify({
                             model: genre,
                             isCreated: true,

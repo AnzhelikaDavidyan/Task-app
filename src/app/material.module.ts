@@ -34,7 +34,7 @@ import {MatSortModule} from "@angular/material/sort";
         MatCardModule,
         MatSelectModule,
         MatInputModule,
-        MatSortModule
+        MatSortModule,
     ],
 })
 export class MaterialModule {

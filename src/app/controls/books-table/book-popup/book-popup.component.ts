@@ -10,7 +10,7 @@ import {CrudService} from "../../services/crud.service";
 import {AUTHORS_URL, BOOKS_URL, GENRES_URL} from "../../util/url";
 import {DataCommunicationService} from "../../services/data-communication.service";
 import {MatOptionSelectionChange} from "@angular/material/core";
-import {isPositive} from "../../shared/util/validators.util";
+import {includeNCharacter, isPositive} from "../../shared/util/validators.util";
 import {DataService} from "../../services/data.service";
 
 @Component({
@@ -53,7 +53,7 @@ export class BookPopupComponent implements OnInit {
             description: new FormControl(model ? model.description : '',
                 [Validators.maxLength(100)]),
             publishedYear: new FormControl(model ? model.publishedYear : '',
-                [Validators.minLength(4), isPositive]),
+                [Validators.minLength(4), isPositive, includeNCharacter(4)]),
             genreId: new FormControl(model ? model.genreId : '', Validators.required),
             authorId: new FormControl(model ? model.authorId : '', Validators.required)
         });

@@ -5,8 +5,19 @@ import {MatSort} from "@angular/material/sort";
 import {DataCommunicationModel, DataCommunicationService} from "../../services/data-communication.service";
 import {ColumnModel} from "../util/table.util";
 import {TypeEnum} from "../enum/type.enum";
+import {MaterialModule} from "../../../material.module";
+import {CommonModule} from "@angular/common";
+import {ReactiveFormsModule} from "@angular/forms";
+import {ReadClassifierPipe} from "../pipe/read-classifier.pipe";
 
 @Component({
+    standalone: true,
+    imports: [
+        MaterialModule,
+        CommonModule,
+        ReactiveFormsModule,
+        ReadClassifierPipe
+    ],
     selector: 'app-table',
     templateUrl: './table.component.html',
     styleUrls: ['./table.component.css']
