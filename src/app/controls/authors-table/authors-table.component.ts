@@ -48,7 +48,7 @@ export class AuthorsTableComponent implements OnInit {
             data: {
                 isNew: true,
                 list: this.list,
-                title: 'Add Genre'
+                title: 'Add Author'
             } as PopupInfo,
             disableClose: true,
             autoFocus: false,
@@ -74,7 +74,7 @@ export class AuthorsTableComponent implements OnInit {
             data: {
                 model,
                 list: this.list,
-                title: 'Edit Genre',
+                title: 'Edit Author',
             } as PopupInfo,
             disableClose: true,
             autoFocus: false,

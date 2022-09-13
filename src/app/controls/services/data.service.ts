@@ -145,7 +145,7 @@ export class DataService {
         );
     }
 
-    public createItem(url: string, model: any): Observable<any> {
+    public createItem(url: string, model: any): Observable<Object> {
         return this.crudService.getLastId(url).pipe(
             switchMap((id: number) => {
                 model.id = ++id;

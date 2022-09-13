@@ -12,6 +12,7 @@ import {DataCommunicationService} from "../../services/data-communication.servic
 import {MatOptionSelectionChange} from "@angular/material/core";
 import {includeNCharacter, isPositive} from "../../shared/util/validators.util";
 import {DataService} from "../../services/data.service";
+import {EntityModel} from "../../model/entity.model";
 
 @Component({
     selector: 'app-book-popup',
@@ -34,7 +35,7 @@ export class BookPopupComponent implements OnInit {
                 private dataCommunicationService: DataCommunicationService,
                 public dialogRef: MatDialogRef<DeletePopupComponent>,
                 @Inject(MAT_DIALOG_DATA) public data: {
-                    model: BookModel, list: any[], isNew: boolean, title: string
+                    model: BookModel, list: BookModel[], isNew: boolean, title: string
                 }) {
         this.bookModel = this.data.model;
         this.initForm(this.bookModel);
@@ -126,11 +127,11 @@ export class BookPopupComponent implements OnInit {
         this.filteredAuthors$ = this.filterAuthor(filter);
     }
 
-    private filterAuthor(filter: string): Observable<any[]> {
+    private filterAuthor(filter: string): Observable<AuthorModel[]> {
         return this.crudService.getItemsByFilter(AUTHORS_URL, filter).pipe(
-            map(data => {
-                const authors: any[] = [];
-                data.forEach(item => {
+            map((data: EntityModel[]) => {
+                const authors: AuthorModel[] = [];
+                (data as AuthorModel[]).forEach((item: AuthorModel) => {
                     authors.push(new AuthorModel(item.id, item.firstName, item.lastName, item.genreId))
                 })
                 return authors;

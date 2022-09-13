@@ -45,11 +45,11 @@ export class CrudService {
         )
     }
 
-    public getItemsByFilter(url: string, filter: string): Observable<any[]> {
+    public getItemsByFilter(url: string, filter: string): Observable<EntityModel[]> {
         return this.httpClient.get<EntityModel[]>(`${url}?${filter}`);
     }
 
-    public getItemById(url: string, systemName: string, id: number): Observable<any> {
+    public getItemById(url: string, systemName: string, id: number): Observable<EntityModel> {
         return this.httpClient.get<EntityModel[]>(`${url}?${systemName}=${id}`).pipe(
             map((item) => item[0])
         );

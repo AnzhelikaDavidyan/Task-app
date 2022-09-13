@@ -25,7 +25,7 @@ export class GenrePopupComponent implements OnInit {
                 private dataCommunicationService: DataCommunicationService,
                 public dialogRef: MatDialogRef<DeletePopupComponent>,
                 @Inject(MAT_DIALOG_DATA) public data: {
-                    model: GenreModel, list: any[], isNew: boolean, title: string,
+                    model: GenreModel, list: GenreModel[], isNew: boolean, title: string,
                     genres: GenreModel[]
                 }) {
         this.genreModel = this.data.model;

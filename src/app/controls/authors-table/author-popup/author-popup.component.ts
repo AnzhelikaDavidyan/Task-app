@@ -10,6 +10,7 @@ import {GenreModel} from "../../genres-table/model/genre.model";
 import {AUTHORS_URL, GENRES_URL} from "../../util/url";
 import {MatOptionSelectionChange} from "@angular/material/core";
 import {DataService} from "../../services/data.service";
+import {EntityModel} from "../../model/entity.model";
 
 @Component({
     selector: 'app-author-popup',
@@ -29,7 +30,7 @@ export class AuthorPopupComponent implements OnInit {
                 private dataCommunicationService: DataCommunicationService,
                 public dialogRef: MatDialogRef<DeletePopupComponent>,
                 @Inject(MAT_DIALOG_DATA) public data: {
-                    model: AuthorModel, list: any[], isNew: boolean, title: string
+                    model: AuthorModel, list: EntityModel[], isNew: boolean, title: string
                 }) {
         this.authorModel = this.data.model;
         this.initForm(this.authorModel);

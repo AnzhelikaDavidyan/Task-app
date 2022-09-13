@@ -131,6 +131,12 @@
       "firstName": "Charlotte",
       "lastName": "Brontë",
       "genreId": 1
+    },
+    {
+      "id": 9,
+      "firstName": "TEST",
+      "lastName": "TEST",
+      "genreId": 4
     }
   ]
 }
