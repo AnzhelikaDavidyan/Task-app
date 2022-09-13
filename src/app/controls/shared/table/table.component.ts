@@ -9,6 +9,7 @@ import {MaterialModule} from "../../../material.module";
 import {CommonModule} from "@angular/common";
 import {ReactiveFormsModule} from "@angular/forms";
 import {ReadClassifierPipe} from "../pipe/read-classifier.pipe";
+import {EntityModel} from "../../model/entity.model";
 
 @Component({
     standalone: true,
@@ -24,14 +25,14 @@ import {ReadClassifierPipe} from "../pipe/read-classifier.pipe";
 })
 export class TableComponent implements OnInit, OnChanges {
 
-    @Input() public list!: any[];
+    @Input() public list!: EntityModel[];
     @Input() public displayedColumns!: string[];
     @Input() public columns: ColumnModel[] = [];
 
     public readonly TYPES = TypeEnum;
     @Output() public add: EventEmitter<void> = new EventEmitter<void>();
-    @Output() public edit: EventEmitter<[MouseEvent, any]> = new EventEmitter<[MouseEvent, any]>();
-    @Output() public delete: EventEmitter<any> = new EventEmitter<any>();
+    @Output() public edit: EventEmitter<[MouseEvent, EntityModel]> = new EventEmitter<[MouseEvent, EntityModel]>();
+    @Output() public delete: EventEmitter<EntityModel> = new EventEmitter<EntityModel>();
 
 
     @ViewChild(MatPaginator) paginator!: MatPaginator | null;
@@ -75,11 +76,11 @@ export class TableComponent implements OnInit, OnChanges {
         this.add.emit();
     }
 
-    public onEdit(event: MouseEvent, model: any) {
+    public onEdit(event: MouseEvent, model: EntityModel) {
         this.edit.emit([event, model]);
     }
 
-    public onDelete(model: any) {
+    public onDelete(model: EntityModel) {
         this.delete.emit(model);
     }
 

@@ -57,7 +57,7 @@ export class AuthorsTableComponent implements OnInit {
         });
     }
 
-    public delete(model: AuthorModel) {
+    public delete(model: EntityModel) {
         const popupInfo = {
             title: 'Removing an Item',
             message: ' Are you sure you want to remove the selected Item(s) and Related Data?'
@@ -69,7 +69,7 @@ export class AuthorsTableComponent implements OnInit {
         this.dataService.deleteItem(AUTHORS_URL, model, this.list, popupInfo, true, relatedDataModel);
     }
 
-    public edit([event, model]: [MouseEvent, GenreModel]) {
+    public edit([event, model]: [MouseEvent, EntityModel]) {
         this.dialog.open(AuthorPopupComponent, {
             data: {
                 model,
