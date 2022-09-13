@@ -1,15 +1,13 @@
 import {Component, Inject, OnInit} from '@angular/core';
 import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
-import {map, Observable, of, switchMap} from 'rxjs';
+import {map, Observable, of} from 'rxjs';
 import {AuthorModel} from '../../authors-table/model/author.model';
 import {GenreModel} from '../../genres-table/model/genre.model';
 import {DeletePopupComponent} from '../../shared/delete-popup/delete-popup.component';
 import {BookModel} from '../model/book.model';
 import {CrudService} from "../../services/crud.service";
-import {MenuItem} from "../../util/menu.enum";
-import {AUTHORS_URL, BOOKS_URL, GENRES_URL, URLS} from "../../util/url";
-import {EntityModel} from "../../model/entity.model";
+import {AUTHORS_URL, BOOKS_URL, GENRES_URL} from "../../util/url";
 import {DataCommunicationService} from "../../services/data-communication.service";
 import {MatOptionSelectionChange} from "@angular/material/core";
 import {isPositive} from "../../shared/util/validators.util";
@@ -71,14 +69,23 @@ export class BookPopupComponent implements OnInit {
                     next: () => {
                         const book = new BookModel(model.id, model.title, model.description, model.genreId,
                             model.publishedYear, model.authorId);
-                        this.data.list.push(book);
-                        this.dataCommunicationService.notify({isCreated: true});
+                        this.dataCommunicationService.notify({
+                            model: book,
+                            isCreated: true,
+                            isEdited: false,
+                            isDeleted: false
+                        });
                     }
                 })
             } else {
                 this.onEdit(model).subscribe({
                     next: () => {
-                        this.dataCommunicationService.notify({isEdited: true});
+                        this.dataCommunicationService.notify({
+                            model,
+                            isCreated: false,
+                            isEdited: true,
+                            isDeleted: false
+                        });
                     }
                 });
             }
@@ -86,8 +93,6 @@ export class BookPopupComponent implements OnInit {
     }
 
     private onEdit(model: BookModel): Observable<Object> {
-        const index = this.data?.list.findIndex(item => item.id === model.id);
-        this.data.list[index] = model;
         return this.crudService.editItem(BOOKS_URL, model);
     }
 

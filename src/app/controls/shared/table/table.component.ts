@@ -2,7 +2,7 @@ import {Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges
 import {MatTable, MatTableDataSource} from "@angular/material/table";
 import {MatPaginator} from "@angular/material/paginator";
 import {MatSort} from "@angular/material/sort";
-import {DataCommunicationService} from "../../services/data-communication.service";
+import {DataCommunicationModel, DataCommunicationService} from "../../services/data-communication.service";
 import {ColumnModel} from "../util/table.util";
 import {TypeEnum} from "../enum/type.enum";
 
@@ -13,7 +13,7 @@ import {TypeEnum} from "../enum/type.enum";
 })
 export class TableComponent implements OnInit, OnChanges {
 
-    @Input() public list!: any;
+    @Input() public list!: any[];
     @Input() public displayedColumns!: string[];
     @Input() public columns: ColumnModel[] = [];
 
@@ -44,8 +44,15 @@ export class TableComponent implements OnInit, OnChanges {
     ngOnInit(): void {
         this.dataCommunicationService?.getNotifier()?.subscribe(
             {
-                next: (res: any) => {
+                next: (res: DataCommunicationModel) => {
                     if (res.isDeleted || res.isCreated || res.isEdited) {
+                        if (res.isCreated) {
+                            this.list.push(res.model);
+                        }
+                        if (res.isEdited) {
+                            const index = this.list.findIndex(item => item.id === res.model.id);
+                            this.list[index] = res.model;
+                        }
                         this.table.renderRows();
                         this.dataSource._updateChangeSubscription();
                     }

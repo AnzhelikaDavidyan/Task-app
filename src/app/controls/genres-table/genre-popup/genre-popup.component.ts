@@ -50,14 +50,24 @@ export class GenrePopupComponent implements OnInit {
                 this.dataService.createItem(GENRES_URL, model).subscribe({
                     next: () => {
                         const genre = new GenreModel(model.id, model.name);
-                        this.data.list.push(genre);
-                        this.dataCommunicationService.notify({isCreated: true});
+                        // this.data.list.push(genre);
+                        this.dataCommunicationService.notify({
+                            model: genre,
+                            isCreated: true,
+                            isEdited: false,
+                            isDeleted: false
+                        });
                     }
                 })
             } else {
                 this.onEdit(model).subscribe({
                     next: () => {
-                        this.dataCommunicationService.notify({isEdited: true});
+                        this.dataCommunicationService.notify({
+                            model,
+                            isCreated: false,
+                            isEdited: true,
+                            isDeleted: false
+                        });
                     }
                 });
             }
@@ -66,8 +76,8 @@ export class GenrePopupComponent implements OnInit {
 
 
     private onEdit(model: GenreModel): Observable<Object> {
-        const index = this.data?.list.findIndex(item => item.id === model.id);
-        this.data.list[index] = model;
+        // const index = this.data?.list.findIndex(item => item.id === model.id);
+        // this.data.list[index] = model;
         return this.dataService.editItem(GENRES_URL, model);
     }
 }

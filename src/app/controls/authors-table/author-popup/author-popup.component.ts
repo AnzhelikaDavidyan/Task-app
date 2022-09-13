@@ -5,10 +5,9 @@ import {DataCommunicationService} from "../../services/data-communication.servic
 import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
 import {DeletePopupComponent} from "../../shared/delete-popup/delete-popup.component";
 import {AuthorModel} from "../model/author.model";
-import {map, Observable, of, switchMap} from "rxjs";
+import {Observable, of} from "rxjs";
 import {GenreModel} from "../../genres-table/model/genre.model";
-import {AUTHORS_URL, GENRES_URL, URLS} from "../../util/url";
-import {MenuItem} from "../../util/menu.enum";
+import {AUTHORS_URL, GENRES_URL} from "../../util/url";
 import {MatOptionSelectionChange} from "@angular/material/core";
 import {DataService} from "../../services/data.service";
 
@@ -60,13 +59,23 @@ export class AuthorPopupComponent implements OnInit {
                     next: () => {
                         const authorModel = new AuthorModel(model.id, model.firstName, model.lastName, model.genreId);
                         this.data.list.push(authorModel);
-                        this.dataCommunicationService.notify({isCreated: true});
+                        this.dataCommunicationService.notify({
+                            model,
+                            isCreated: true,
+                            isEdited: false,
+                            isDeleted: false
+                        });
                     }
                 })
             } else {
                 this.onEdit(model).subscribe({
                     next: () => {
-                        this.dataCommunicationService.notify({isEdited: true});
+                        this.dataCommunicationService.notify({
+                            model,
+                            isCreated: false,
+                            isEdited: true,
+                            isDeleted: false
+                        });
                     }
                 });
             }
@@ -74,8 +83,6 @@ export class AuthorPopupComponent implements OnInit {
     }
 
     private onEdit(model: AuthorModel): Observable<Object> {
-        const index = this.data?.list.findIndex(item => item.id === model.id);
-        this.data.list[index] = model;
         return this.dataService.editItem(AUTHORS_URL, model);
     }
 

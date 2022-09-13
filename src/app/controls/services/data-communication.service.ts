@@ -5,17 +5,20 @@ import {Observable, Subject} from "rxjs";
     providedIn: 'root'
 })
 export class DataCommunicationService {
-    private notifier: Subject<object> = new Subject();
+    private notifier: Subject<DataCommunicationModel> = new Subject();
 
-    public notify(value: object): void {
+    public notify(value: DataCommunicationModel): void {
         this.notifier.next(value);
     }
 
-    public getNotifier(): Observable<object> {
+    public getNotifier(): Observable<DataCommunicationModel> {
         return this.notifier;
     }
 }
 
 export interface DataCommunicationModel {
     isDeleted: boolean;
+    isCreated: boolean;
+    isEdited: boolean;
+    model: any;
 }
