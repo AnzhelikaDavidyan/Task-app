@@ -8,7 +8,7 @@ import {ColumnModel, PopupInfo, RelatedDataI} from "../shared/util/table.util";
 import {DeletePopupI} from "../shared/delete-popup/delete-popup.component";
 import {GenrePopupComponent} from "./genre-popup/genre-popup.component";
 import {TypeEnum} from "../shared/enum/type.enum";
-import {TableService} from "../shared/table/service/table.service";
+import {DataService} from "../services/data.service";
 
 @Component({
     selector: 'app-genres-table',
@@ -27,11 +27,12 @@ export class GenresTableComponent implements OnInit {
 
     @ViewChild(MatTable) table!: MatTable<any>;
 
-    constructor(public dialog: MatDialog, public tableService: TableService) {
+    constructor(public dialog: MatDialog,
+                private dataService: DataService) {
     }
 
     public ngOnInit(): void {
-        this.tableService.getList(GENRES_URL).pipe(
+        this.dataService.getList(GENRES_URL).pipe(
             takeUntil(this.destroy$)
         ).subscribe({
             next: (genres: any[]) => {
@@ -64,7 +65,7 @@ export class GenresTableComponent implements OnInit {
             filter: `genreId=${model.id}`,
             urls: [AUTHORS_URL, BOOKS_URL]
         } as RelatedDataI;
-        this.tableService.deleteItem(GENRES_URL, model, this.list, popupInfo, true, relatedDataModel);
+        this.dataService.deleteItem(GENRES_URL, model, this.list, popupInfo, true, relatedDataModel);
     }
 
     public edit([event, model]: [MouseEvent, GenreModel]) {

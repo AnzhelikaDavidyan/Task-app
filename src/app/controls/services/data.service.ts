@@ -1,25 +1,23 @@
 import {Injectable} from "@angular/core";
-import {AUTHORS_URL, BOOKS_URL, GENRES_URL} from "../../../util/url";
 import {map, mergeMap, Observable, of, switchMap, zip} from "rxjs";
-import {BookModel} from "../../../books-table/model/book.model";
-import {CrudService} from "../../../services/crud.service";
-import {AuthorModel} from "../../../authors-table/model/author.model";
-import {GenreModel} from "../../../genres-table/model/genre.model";
-import {DeletePopupComponent, DeletePopupI} from "../../delete-popup/delete-popup.component";
+import {BookModel} from "../books-table/model/book.model";
+import {GenreModel} from "../genres-table/model/genre.model";
+import {AuthorModel} from "../authors-table/model/author.model";
+import {AUTHORS_URL, BOOKS_URL, GENRES_URL} from "../util/url";
+import {CrudService} from "./crud.service";
 import {MatDialog, MatDialogConfig} from "@angular/material/dialog";
-import {RelatedDataI} from "../../util/table.util";
-import {DataCommunicationModel, DataCommunicationService} from "../../../services/data-communication.service";
+import {DeletePopupComponent, DeletePopupI} from "../shared/delete-popup/delete-popup.component";
+import {RelatedDataI} from "../shared/util/table.util";
+import {DataCommunicationModel, DataCommunicationService} from "./data-communication.service";
 
 @Injectable({
     providedIn: 'root'
 })
-export class TableService {
+export class DataService {
     constructor(private crudService: CrudService,
                 public dialog: MatDialog,
                 private dataCommunicationService: DataCommunicationService,) {
-
     }
-
 
     public getList(url: string): Observable<BookModel[] | GenreModel[] | AuthorModel[]> {
         let list: Observable<BookModel[] | GenreModel[] | AuthorModel[]> = of([]);
@@ -77,17 +75,6 @@ export class TableService {
             );
     }
 
-    private removeAction(url: string, model: any, list: any[]): Observable<boolean> {
-        const index = list.indexOf(model);
-        if (index > -1) {
-            list.splice(index, 1);
-            return this.crudService.removeItem(url, model).pipe(
-                map(() => true)
-            );
-        }
-        return of(false);
-    }
-
     public deleteItem(url: string, model: any, list: any[],
                       popupInfo: DeletePopupI, isWithRelatedData: boolean = false,
                       relatedDataModel?: RelatedDataI) {
@@ -95,6 +82,20 @@ export class TableService {
         config.data.yesAction = this.onYesAction;
         config.data.yesArgs = [url, model, list, isWithRelatedData, relatedDataModel];
         this.dialog.open(DeletePopupComponent, config);
+    }
+
+    private getDeletePopupGeneralConfig(data: DeletePopupI): MatDialogConfig {
+        return {
+            disableClose: true,
+            autoFocus: false,
+            width: '400px',
+            height: 'auto',
+            data: {
+                context: this,
+                title: data.title,
+                message: data.message
+            }
+        };
     }
 
     private onYesAction(url: string, model: any, list: any[],
@@ -112,6 +113,17 @@ export class TableService {
                 this.dataCommunicationService.notify({isDeleted: true} as DataCommunicationModel)
             }
         })
+    }
+
+    private removeAction(url: string, model: any, list: any[]): Observable<boolean> {
+        const index = list.indexOf(model);
+        if (index > -1) {
+            list.splice(index, 1);
+            return this.crudService.removeItem(url, model).pipe(
+                map(() => true)
+            );
+        }
+        return of(false);
     }
 
     private removeRelatedData(relatedData: RelatedDataI): Observable<boolean> {
@@ -132,18 +144,4 @@ export class TableService {
         );
     }
 
-
-    private getDeletePopupGeneralConfig(data: DeletePopupI): MatDialogConfig {
-        return {
-            disableClose: true,
-            autoFocus: false,
-            width: '400px',
-            height: 'auto',
-            data: {
-                context: this,
-                title: data.title,
-                message: data.message
-            }
-        };
-    }
 }

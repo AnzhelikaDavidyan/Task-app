@@ -8,7 +8,7 @@ import {AUTHORS_URL, BOOKS_URL, GENRES_URL} from "../util/url";
 import {DeletePopupI} from "../shared/delete-popup/delete-popup.component";
 import {AuthorPopupComponent} from "./author-popup/author-popup.component";
 import {TypeEnum} from "../shared/enum/type.enum";
-import {TableService} from "../shared/table/service/table.service";
+import {DataService} from "../services/data.service";
 
 @Component({
     selector: 'app-authors-table',
@@ -29,11 +29,11 @@ export class AuthorsTableComponent implements OnInit {
     public list: AuthorModel [] = [];
 
     constructor(public dialog: MatDialog,
-                public tableService: TableService) {
+                private dataService: DataService) {
     }
 
     public ngOnInit(): void {
-        this.tableService.getList(AUTHORS_URL).pipe(
+        this.dataService.getList(AUTHORS_URL).pipe(
             takeUntil(this.destroy$)
         ).subscribe({
             next: (authors: any[]) => {
@@ -65,7 +65,7 @@ export class AuthorsTableComponent implements OnInit {
             filter: `authorId=${model.id}`,
             urls: [BOOKS_URL]
         } as RelatedDataI;
-        this.tableService.deleteItem(AUTHORS_URL, model, this.list, popupInfo, true, relatedDataModel);
+        this.dataService.deleteItem(AUTHORS_URL, model, this.list, popupInfo, true, relatedDataModel);
     }
 
     public edit([event, model]: [MouseEvent, GenreModel]) {

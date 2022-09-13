@@ -42,7 +42,7 @@ export class TableComponent implements OnInit, OnChanges {
     }
 
     ngOnInit(): void {
-        this.dataCommunicationService.getNotifier().subscribe(
+        this.dataCommunicationService?.getNotifier()?.subscribe(
             {
                 next: (res: any) => {
                     if (res.isDeleted || res.isCreated || res.isEdited) {

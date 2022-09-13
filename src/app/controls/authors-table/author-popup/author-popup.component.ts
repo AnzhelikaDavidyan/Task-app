@@ -11,6 +11,7 @@ import {AUTHORS_URL, GENRES_URL, URLS} from "../../util/url";
 import {MenuItem} from "../../util/menu.enum";
 import {EntityModel} from "../../model/entity.model";
 import {MatOptionSelectionChange} from "@angular/material/core";
+import {DataService} from "../../services/data.service";
 
 @Component({
     selector: 'app-author-popup',
@@ -25,6 +26,7 @@ export class AuthorPopupComponent implements OnInit {
     public genres$: Observable<GenreModel[]> = of([]);
 
     constructor(private formBuilder: FormBuilder,
+                private dataService: DataService,
                 private crudService: CrudService,
                 private dataCommunicationService: DataCommunicationService,
                 public dialogRef: MatDialogRef<DeletePopupComponent>,
@@ -36,19 +38,7 @@ export class AuthorPopupComponent implements OnInit {
     }
 
     ngOnInit(): void {
-        this.genres$ = this.getGenres() as Observable<GenreModel[]>;
-    }
-
-    private getGenres(): Observable<GenreModel[]> {
-        return this.crudService.getList(GENRES_URL).pipe(
-            map((list: EntityModel[]) => {
-                const genres: GenreModel[] = [];
-                list.forEach((item: any) => {
-                    genres.push(new GenreModel(item.id, item.name))
-                });
-                return genres;
-            })
-        );
+        this.genres$ = this.dataService.getList(GENRES_URL) as Observable<GenreModel[]>;
     }
 
     private initForm(model?: AuthorModel): void {

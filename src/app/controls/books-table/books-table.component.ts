@@ -4,12 +4,10 @@ import {Subject, takeUntil} from 'rxjs';
 import {DeletePopupI} from '../shared/delete-popup/delete-popup.component';
 import {BookPopupComponent} from './book-popup/book-popup.component';
 import {BookModel} from './model/book.model';
-import {CrudService} from "../services/crud.service";
-import {BOOKS_URL, GENRES_URL} from "../util/url";
-import {DataCommunicationService} from "../services/data-communication.service";
+import {BOOKS_URL} from "../util/url";
 import {ColumnModel, PopupInfo} from "../shared/util/table.util";
 import {TypeEnum} from "../shared/enum/type.enum";
-import {TableService} from "../shared/table/service/table.service";
+import {DataService} from "../services/data.service";
 
 @Component({
     selector: 'app-books-table',
@@ -30,11 +28,11 @@ export class BooksTableComponent implements OnInit {
 
     constructor(
         public dialog: MatDialog,
-        public tableService: TableService) {
+        private dataService: DataService) {
     }
 
     ngOnInit(): void {
-        this.tableService.getList(BOOKS_URL).pipe(
+        this.dataService.getList(BOOKS_URL).pipe(
             takeUntil(this.destroy$)
         ).subscribe({
             next: (books: any[]) => {
@@ -76,7 +74,7 @@ export class BooksTableComponent implements OnInit {
             title: 'Removing an Item',
             message: ' Are you sure you want to remove the selected Item(s) ?'
         } as DeletePopupI;
-        this.tableService.deleteItem(BOOKS_URL, model, this.list, popupInfo);
+        this.dataService.deleteItem(BOOKS_URL, model, this.list, popupInfo);
     }
 
     public ngOnDestroy(): void {
