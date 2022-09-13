@@ -9,6 +9,7 @@ import {DeletePopupI} from "../shared/delete-popup/delete-popup.component";
 import {AuthorPopupComponent} from "./author-popup/author-popup.component";
 import {TypeEnum} from "../shared/enum/type.enum";
 import {DataService} from "../services/data.service";
+import {EntityModel} from "../model/entity.model";
 
 @Component({
     selector: 'app-authors-table',
@@ -36,8 +37,8 @@ export class AuthorsTableComponent implements OnInit {
         this.dataService.getList(AUTHORS_URL).pipe(
             takeUntil(this.destroy$)
         ).subscribe({
-            next: (authors: any[]) => {
-                this.list = authors;
+            next: (authors: EntityModel[]) => {
+                this.list = authors as AuthorModel[];
             }
         });
     }

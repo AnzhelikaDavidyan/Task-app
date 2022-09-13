@@ -9,6 +9,7 @@ import {DeletePopupI} from "../shared/delete-popup/delete-popup.component";
 import {GenrePopupComponent} from "./genre-popup/genre-popup.component";
 import {TypeEnum} from "../shared/enum/type.enum";
 import {DataService} from "../services/data.service";
+import {EntityModel} from "../model/entity.model";
 
 @Component({
     selector: 'app-genres-table',
@@ -35,8 +36,8 @@ export class GenresTableComponent implements OnInit {
         this.dataService.getList(GENRES_URL).pipe(
             takeUntil(this.destroy$)
         ).subscribe({
-            next: (genres: any[]) => {
-                this.list = genres;
+            next: (genres: EntityModel[]) => {
+                this.list = genres as GenreModel[];
             }
         });
     }

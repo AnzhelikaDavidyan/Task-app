@@ -8,6 +8,7 @@ import {BOOKS_URL} from "../util/url";
 import {ColumnModel, PopupInfo} from "../shared/util/table.util";
 import {TypeEnum} from "../shared/enum/type.enum";
 import {DataService} from "../services/data.service";
+import {EntityModel} from "../model/entity.model";
 
 @Component({
     selector: 'app-books-table',
@@ -35,8 +36,8 @@ export class BooksTableComponent implements OnInit {
         this.dataService.getList(BOOKS_URL).pipe(
             takeUntil(this.destroy$)
         ).subscribe({
-            next: (books: any[]) => {
-                this.list = books;
+            next: (books: EntityModel[]) => {
+                this.list = books as BookModel[];
             }
         });
     }

@@ -9,6 +9,7 @@ import {MatDialog, MatDialogConfig} from "@angular/material/dialog";
 import {DeletePopupComponent, DeletePopupI} from "../shared/delete-popup/delete-popup.component";
 import {RelatedDataI} from "../shared/util/table.util";
 import {DataCommunicationModel, DataCommunicationService} from "./data-communication.service";
+import {EntityModel} from "../model/entity.model";
 
 @Injectable({
     providedIn: 'root'
@@ -19,8 +20,8 @@ export class DataService {
                 private dataCommunicationService: DataCommunicationService,) {
     }
 
-    public getList(url: string): Observable<BookModel[] | GenreModel[] | AuthorModel[]> {
-        let list: Observable<BookModel[] | GenreModel[] | AuthorModel[]> = of([]);
+    public getList(url: string): Observable<EntityModel[]> {
+        let list: Observable<EntityModel[]> = of([]);
         switch (url) {
             case BOOKS_URL:
                 list = this.getBooks(url) as Observable<BookModel[]>;
@@ -35,14 +36,14 @@ export class DataService {
         return list;
     }
 
-    private getBooks(url: string): Observable<BookModel[]> {
+    private getBooks<Type>(url: string): Observable<BookModel[]> {
         return this.crudService.getList(url)
             .pipe(
                 map((books: any) => {
                     const models: BookModel[] = [];
                     books.forEach((item: BookModel) => {
                         models.push(new BookModel(item.id, item.title, item.description,
-                            item.genreId, item.publishedYear, item.authorId))
+                            item.genreId, item.publishedYear, item.authorId));
                     });
                     return models;
                 })
