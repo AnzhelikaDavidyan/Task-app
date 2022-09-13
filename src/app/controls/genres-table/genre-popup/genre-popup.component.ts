@@ -8,6 +8,7 @@ import {DeletePopupComponent} from "../../shared/delete-popup/delete-popup.compo
 import {Observable} from "rxjs";
 import {GENRES_URL} from "../../util/url";
 import {DataService} from "../../services/data.service";
+import {duplicate} from "../../shared/util/validators.util";
 
 @Component({
     selector: 'app-genre-popup',
@@ -39,7 +40,7 @@ export class GenrePopupComponent implements OnInit {
         this.formGroup = this.formBuilder.group({
             id: new FormControl(model ? model.id : ''),
             name: new FormControl(model ? model.name : '', [Validators.required,
-                Validators.maxLength(50)]),
+                Validators.maxLength(50), duplicate(this.data.list)]),
         });
     }
 

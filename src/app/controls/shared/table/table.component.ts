@@ -1,4 +1,14 @@
-import {Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges, ViewChild} from '@angular/core';
+import {
+    Component,
+    EventEmitter,
+    Input,
+    OnChanges,
+    OnDestroy,
+    OnInit,
+    Output,
+    SimpleChanges,
+    ViewChild
+} from '@angular/core';
 import {MatTable, MatTableDataSource} from "@angular/material/table";
 import {MatPaginator} from "@angular/material/paginator";
 import {MatSort} from "@angular/material/sort";
@@ -10,6 +20,8 @@ import {CommonModule} from "@angular/common";
 import {ReactiveFormsModule} from "@angular/forms";
 import {ReadClassifierPipe} from "../pipe/read-classifier.pipe";
 import {EntityModel} from "../../model/entity.model";
+import {Subject, takeUntil} from "rxjs";
+import {MatSnackBar} from "@angular/material/snack-bar";
 
 @Component({
     standalone: true,
@@ -23,7 +35,9 @@ import {EntityModel} from "../../model/entity.model";
     templateUrl: './table.component.html',
     styleUrls: ['./table.component.css']
 })
-export class TableComponent implements OnInit, OnChanges {
+export class TableComponent implements OnInit, OnChanges, OnDestroy {
+
+    private destroy$ = new Subject();
 
     @Input() public list!: EntityModel[];
     @Input() public displayedColumns!: string[];
@@ -41,11 +55,16 @@ export class TableComponent implements OnInit, OnChanges {
 
     public dataSource!: MatTableDataSource<EntityModel[]>;
 
-    constructor(private dataCommunicationService: DataCommunicationService) {
+    constructor(private dataCommunicationService: DataCommunicationService,
+                private snackBar: MatSnackBar) {
     }
 
-    ngOnChanges(changes: SimpleChanges): void {
-        const list = changes['list'];
+    public ngOnDestroy(): void {
+        this.destroy$.next(0);
+        this.destroy$.complete();
+    }
+
+    ngOnChanges({list}: SimpleChanges): void {
         if (list && list.currentValue) {
             this.dataSource = new MatTableDataSource(list.currentValue);
             this.dataSource.paginator = this.paginator;
@@ -54,37 +73,49 @@ export class TableComponent implements OnInit, OnChanges {
     }
 
     ngOnInit(): void {
-        this.dataCommunicationService?.getNotifier()?.subscribe(
-            {
-                next: (res: DataCommunicationModel) => {
-                    if (res.isDeleted || res.isCreated || res.isEdited) {
-                        if (res.isCreated) {
-                            this.list.push(res.model);
+        this.dataCommunicationService?.getNotifier()?.pipe(takeUntil(this.destroy$))
+            .subscribe(
+                {
+                    next: (res: DataCommunicationModel) => {
+                        if (res.isDeleted || res.isCreated || res.isEdited) {
+                            if (res.isCreated) {
+                                this.list.push(res.model);
+                                this.openSnackBar('Data has been successfully added.');
+                            }
+                            if (res.isEdited) {
+                                const index = this.list.findIndex(item => item.id === res.model.id);
+                                this.list[index] = res.model;
+                                this.openSnackBar('Data has been successfully edited.');
+                            }
+                            if (res.isDeleted) {
+                                this.openSnackBar('Data has been successfully deleted.');
+                            }
+                            this.dataSource._updateChangeSubscription();
                         }
-                        if (res.isEdited) {
-                            const index = this.list.findIndex(item => item.id === res.model.id);
-                            this.list[index] = res.model;
-                        }
-                        this.dataSource._updateChangeSubscription();
                     }
                 }
-            }
-        )
+            )
     }
 
-    public onAdd() {
+    private openSnackBar(message: string) {
+        this.snackBar.open(message, '', {
+            duration: 2000,
+        });
+    }
+
+    public onAdd(): void {
         this.add.emit();
     }
 
-    public onEdit(event: MouseEvent, model: EntityModel) {
+    public onEdit(event: MouseEvent, model: EntityModel): void {
         this.edit.emit([event, model]);
     }
 
-    public onDelete(model: EntityModel) {
+    public onDelete(model: EntityModel): void {
         this.delete.emit(model);
     }
 
-    public applyFilter(event: Event) {
+    public applyFilter(event: Event): void {
         const filterValue = (event.target as HTMLInputElement).value;
         this.dataSource.filter = filterValue.trim().toLowerCase();
 

@@ -42,7 +42,7 @@ export class BooksTableComponent implements OnInit {
         });
     }
 
-    public add() {
+    public add(): void {
         this.dialog.open(BookPopupComponent, {
             data: {
                 isNew: true,
@@ -56,7 +56,7 @@ export class BooksTableComponent implements OnInit {
         });
     }
 
-    public edit([event, model]: [MouseEvent, EntityModel]) {
+    public edit([event, model]: [MouseEvent, EntityModel]): void {
         this.dialog.open(BookPopupComponent, {
             data: {
                 title: 'Edit Book',
@@ -70,7 +70,7 @@ export class BooksTableComponent implements OnInit {
         });
     }
 
-    public delete(model: EntityModel) {
+    public delete(model: EntityModel): void {
         const popupInfo = {
             title: 'Removing an Item',
             message: ' Are you sure you want to remove the selected Item(s) ?'

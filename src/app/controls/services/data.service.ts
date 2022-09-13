@@ -78,7 +78,7 @@ export class DataService {
 
     public deleteItem(url: string, model: any, list: any[],
                       popupInfo: DeletePopupI, isWithRelatedData: boolean = false,
-                      relatedDataModel?: RelatedDataI) {
+                      relatedDataModel?: RelatedDataI): void {
         const config = this.getDeletePopupGeneralConfig(popupInfo);
         config.data.yesAction = this.onYesAction;
         config.data.yesArgs = [url, model, list, isWithRelatedData, relatedDataModel];
@@ -111,7 +111,7 @@ export class DataService {
             })
         ).subscribe({
             next: () => {
-                this.dataCommunicationService.notify({isDeleted: true} as DataCommunicationModel)
+                this.dataCommunicationService.notify({isDeleted: true} as DataCommunicationModel);
             }
         })
     }

@@ -15,6 +15,22 @@
     {
       "id": 4,
       "name": "horror"
+    },
+    {
+      "id": 5,
+      "name": "for test"
+    },
+    {
+      "id": 6,
+      "name": "test"
+    },
+    {
+      "id": 8,
+      "name": "snack test"
+    },
+    {
+      "id": 9,
+      "name": "test 2"
     }
   ],
   "books": [
