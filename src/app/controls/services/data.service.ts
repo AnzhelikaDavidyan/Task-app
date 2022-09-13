@@ -3,12 +3,13 @@ import {map, mergeMap, Observable, of, switchMap, zip} from "rxjs";
 import {BookModel} from "../books-table/model/book.model";
 import {GenreModel} from "../genres-table/model/genre.model";
 import {AuthorModel} from "../authors-table/model/author.model";
-import {AUTHORS_URL, BOOKS_URL, GENRES_URL} from "../util/url";
+import {AUTHORS_URL, BOOKS_URL, GENRES_URL, URLS} from "../util/url";
 import {CrudService} from "./crud.service";
 import {MatDialog, MatDialogConfig} from "@angular/material/dialog";
 import {DeletePopupComponent, DeletePopupI} from "../shared/delete-popup/delete-popup.component";
 import {RelatedDataI} from "../shared/util/table.util";
 import {DataCommunicationModel, DataCommunicationService} from "./data-communication.service";
+import {MenuItem} from "../util/menu.enum";
 
 @Injectable({
     providedIn: 'root'
@@ -144,4 +145,18 @@ export class DataService {
         );
     }
 
+    public createItem(url: string, model: any): Observable<any> {
+        return this.crudService.getLastId(url).pipe(
+            switchMap((id: number) => {
+                model.id = ++id;
+                return this.crudService.saveItem(url, model).pipe(
+                    map(data => data)
+                );
+            })
+        );
+    }
+
+    public editItem(url: string, model: any): Observable<any> {
+        return this.crudService.editItem(url, model);
+    }
 }

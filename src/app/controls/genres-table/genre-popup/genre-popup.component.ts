@@ -5,9 +5,9 @@ import {CrudService} from "../../services/crud.service";
 import {DataCommunicationService} from "../../services/data-communication.service";
 import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
 import {DeletePopupComponent} from "../../shared/delete-popup/delete-popup.component";
-import {Observable, switchMap} from "rxjs";
-import {GENRES_URL, URLS} from "../../util/url";
-import {MenuItem} from "../../util/menu.enum";
+import {Observable} from "rxjs";
+import {GENRES_URL} from "../../util/url";
+import {DataService} from "../../services/data.service";
 
 @Component({
     selector: 'app-genre-popup',
@@ -21,6 +21,7 @@ export class GenrePopupComponent implements OnInit {
 
     constructor(private formBuilder: FormBuilder,
                 private crudService: CrudService,
+                private dataService: DataService,
                 private dataCommunicationService: DataCommunicationService,
                 public dialogRef: MatDialogRef<DeletePopupComponent>,
                 @Inject(MAT_DIALOG_DATA) public data: {
@@ -46,8 +47,10 @@ export class GenrePopupComponent implements OnInit {
         const model = this.formGroup.value;
         if (this.formGroup.valid) {
             if (this.data.isNew) {
-                this.createGenre(model).subscribe({
+                this.dataService.createItem(GENRES_URL, model).subscribe({
                     next: () => {
+                        const genre = new GenreModel(model.id, model.name);
+                        this.data.list.push(genre);
                         this.dataCommunicationService.notify({isCreated: true});
                     }
                 })
@@ -61,19 +64,10 @@ export class GenrePopupComponent implements OnInit {
         }
     }
 
-    private createGenre(genreModel: GenreModel): Observable<Object> {
-        return this.crudService.getLastId(URLS.get(MenuItem.GENRES) as string).pipe(
-            switchMap((id: number) => {
-                const model = new GenreModel(++id, genreModel.name);
-                this.data.list.push(model);
-                return this.crudService.saveItem(GENRES_URL, model);
-            })
-        );
-    }
 
     private onEdit(model: GenreModel): Observable<Object> {
         const index = this.data?.list.findIndex(item => item.id === model.id);
         this.data.list[index] = model;
-        return this.crudService.editItem(GENRES_URL, model);
+        return this.dataService.editItem(GENRES_URL, model);
     }
 }

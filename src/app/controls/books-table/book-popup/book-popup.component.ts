@@ -67,8 +67,11 @@ export class BookPopupComponent implements OnInit {
         const model = this.formGroup.value;
         if (this.formGroup.valid) {
             if (this.data.isNew) {
-                this.createBook(model).subscribe({
+                this.dataService.createItem(BOOKS_URL, model).subscribe({
                     next: () => {
+                        const book = new BookModel(model.id, model.title, model.description, model.genreId,
+                            model.publishedYear, model.authorId);
+                        this.data.list.push(book);
                         this.dataCommunicationService.notify({isCreated: true});
                     }
                 })
@@ -86,17 +89,6 @@ export class BookPopupComponent implements OnInit {
         const index = this.data?.list.findIndex(item => item.id === model.id);
         this.data.list[index] = model;
         return this.crudService.editItem(BOOKS_URL, model);
-    }
-
-    private createBook(model: BookModel): Observable<Object> {
-        return this.crudService.getLastId(URLS.get(MenuItem.BOOKS) as string).pipe(
-            switchMap((id: number) => {
-                const book = new BookModel(++id, model.title, model.description, model.genreId,
-                    model.publishedYear, model.authorId);
-                this.data.list.push(book);
-                return this.crudService.saveItem(BOOKS_URL, book);
-            })
-        );
     }
 
     public onAuthorChange(event: MatOptionSelectionChange) {

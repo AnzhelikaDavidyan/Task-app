@@ -1,15 +1,47 @@
 {
   "genres": [
     {
+      "id": 1,
+      "name": "fiction 2"
+    },
+    {
       "id": 2,
       "name": "drama"
     },
     {
       "id": 3,
       "name": "fantasy"
+    },
+    {
+      "id": 4,
+      "name": "horror"
+    },
+    {
+      "id": 5,
+      "name": "AAA"
+    },
+    {
+      "id": 6,
+      "name": "BBB"
     }
   ],
   "books": [
+    {
+      "id": 1,
+      "title": "It Ends with Us",
+      "description": "lorem ipsum dolor sit",
+      "genreId": 1,
+      "publishedYear": 2016,
+      "authorId": 4
+    },
+    {
+      "id": 2,
+      "title": "Jane Eyre",
+      "description": "lorem ipsum dolor sit",
+      "publishedYear": 1997,
+      "genreId": 1,
+      "authorId": 8
+    },
     {
       "id": 3,
       "title": "Hamlet",
@@ -41,14 +73,62 @@
       "publishedYear": 1997,
       "genreId": 3,
       "authorId": 4
+    },
+    {
+      "id": 7,
+      "title": "Dracula",
+      "description": "lorem ipsum dolor sit",
+      "publishedYear": 1897,
+      "genreId": 4,
+      "authorId": 2
+    },
+    {
+      "id": 8,
+      "title": "Frankenstein",
+      "description": "lorem ipsum dolor sit",
+      "publishedYear": 1818,
+      "genreId": 4,
+      "authorId": 1
+    },
+    {
+      "id": 9,
+      "title": "Anz",
+      "description": "afsafasd",
+      "publishedYear": 2000,
+      "genreId": 1,
+      "authorId": 8
     }
   ],
   "authors": [
+    {
+      "id": 1,
+      "firstName": "Mary",
+      "lastName": "Shelley",
+      "genreId": 4
+    },
+    {
+      "id": 2,
+      "firstName": "Bram",
+      "lastName": "Stoker",
+      "genreId": 4
+    },
     {
       "id": 3,
       "firstName": "J. K. ",
       "lastName": "Rowling",
       "genreId": 3
+    },
+    {
+      "id": 4,
+      "firstName": "Colleen",
+      "lastName": " Hoover",
+      "genreId": 1
+    },
+    {
+      "id": 5,
+      "firstName": "Colleen",
+      "lastName": " Hoover 2",
+      "genreId": 1
     },
     {
       "id": 6,
@@ -61,6 +141,18 @@
       "firstName": "George",
       "lastName": "R. R. Martin",
       "genreId": 3
+    },
+    {
+      "id": 8,
+      "firstName": "Charlotte",
+      "lastName": "Brontë",
+      "genreId": 1
+    },
+    {
+      "id": 10,
+      "firstName": "Anzhelika`",
+      "lastName": "Davidyan",
+      "genreId": 5
     }
   ]
 }

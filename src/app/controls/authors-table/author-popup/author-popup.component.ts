@@ -9,7 +9,6 @@ import {map, Observable, of, switchMap} from "rxjs";
 import {GenreModel} from "../../genres-table/model/genre.model";
 import {AUTHORS_URL, GENRES_URL, URLS} from "../../util/url";
 import {MenuItem} from "../../util/menu.enum";
-import {EntityModel} from "../../model/entity.model";
 import {MatOptionSelectionChange} from "@angular/material/core";
 import {DataService} from "../../services/data.service";
 
@@ -57,8 +56,10 @@ export class AuthorPopupComponent implements OnInit {
         const model = this.formGroup.value;
         if (this.formGroup.valid) {
             if (this.data.isNew) {
-                this.onCreate(model).subscribe({
+                this.dataService.createItem(AUTHORS_URL, model).subscribe({
                     next: () => {
+                        const authorModel = new AuthorModel(model.id, model.firstName, model.lastName, model.genreId);
+                        this.data.list.push(authorModel);
                         this.dataCommunicationService.notify({isCreated: true});
                     }
                 })
@@ -75,17 +76,7 @@ export class AuthorPopupComponent implements OnInit {
     private onEdit(model: AuthorModel): Observable<Object> {
         const index = this.data?.list.findIndex(item => item.id === model.id);
         this.data.list[index] = model;
-        return this.crudService.editItem(AUTHORS_URL, model);
-    }
-
-    private onCreate(model: AuthorModel): Observable<Object> {
-        return this.crudService.getLastId(URLS.get(MenuItem.AUTHORS) as string).pipe(
-            switchMap((id: number) => {
-                const authorModel = new AuthorModel(++id, model.firstName, model.lastName, model.genreId);
-                this.data.list.push(authorModel);
-                return this.crudService.saveItem(AUTHORS_URL, authorModel);
-            })
-        );
+        return this.dataService.editItem(AUTHORS_URL, model);
     }
 
     public onGenreChange(event: MatOptionSelectionChange): void {
