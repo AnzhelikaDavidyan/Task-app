@@ -113,22 +113,29 @@ export class DataService {
     private onYesAction(url: string, model: EntityModel, list: any[],
                         isWithRelatedData: boolean = false,
                         relatedData?: RelatedDataI) {
-        this.removeAction(url, model, list).pipe(
+        this.onDelete(url, model, list, isWithRelatedData, relatedData)
+            .subscribe({
+                next: () => {
+                    this.publish(ActionEnum.DELETE, model);
+                    this.dataCommunicationService.notify({isDeleted: true} as DataCommunicationModel);
+                }
+            })
+    }
+
+    private onDelete(url: string, model: EntityModel, list: any[],
+                     isWithRelatedData: boolean = false,
+                     relatedData?: RelatedDataI): Observable<boolean> {
+        return this.removeItem(url, model, list).pipe(
             switchMap((_) => {
                 if (isWithRelatedData && relatedData) {
                     return this.removeRelatedData(relatedData);
                 }
                 return of(true);
             })
-        ).subscribe({
-            next: () => {
-                this.publish(ActionEnum.DELETE, model);
-                this.dataCommunicationService.notify({isDeleted: true} as DataCommunicationModel);
-            }
-        })
+        )
     }
 
-    private removeAction(url: string, model: any, list: any[]): Observable<boolean> {
+    private removeItem(url: string, model: any, list: any[]): Observable<boolean> {
         const index = list.indexOf(model);
         if (index > -1) {
             list.splice(index, 1);
