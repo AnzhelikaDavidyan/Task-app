@@ -1,4 +1,4 @@
-import {Injectable} from "@angular/core";
+import {Inject, Injectable} from "@angular/core";
 import {map, mergeMap, Observable, of, switchMap, zip} from "rxjs";
 import {BookModel} from "../books-table/model/book.model";
 import {GenreModel} from "../genres-table/model/genre.model";
@@ -10,6 +10,9 @@ import {DeletePopupComponent, DeletePopupI} from "../shared/delete-popup/delete-
 import {RelatedDataI} from "../shared/util/table.util";
 import {DataCommunicationModel, DataCommunicationService} from "./data-communication.service";
 import {EntityModel} from "../model/entity.model";
+import {ActionEnum} from "../util/action.enum";
+import {BROADCAST_SERVICE} from "../../app.token";
+import {BroadcastService} from "./broadcast.service";
 
 @Injectable({
     providedIn: 'root'
@@ -17,7 +20,8 @@ import {EntityModel} from "../model/entity.model";
 export class DataService {
     constructor(private crudService: CrudService,
                 public dialog: MatDialog,
-                private dataCommunicationService: DataCommunicationService,) {
+                private dataCommunicationService: DataCommunicationService,
+                @Inject(BROADCAST_SERVICE) private broadCastService: BroadcastService) {
     }
 
     public getList(url: string): Observable<EntityModel[]> {
@@ -99,7 +103,14 @@ export class DataService {
         };
     }
 
-    private onYesAction(url: string, model: any, list: any[],
+    private publish(type: ActionEnum, model: EntityModel) {
+        this.broadCastService.publish({
+            type: type,
+            payload: model
+        });
+    }
+
+    private onYesAction(url: string, model: EntityModel, list: any[],
                         isWithRelatedData: boolean = false,
                         relatedData?: RelatedDataI) {
         this.removeAction(url, model, list).pipe(
@@ -111,6 +122,7 @@ export class DataService {
             })
         ).subscribe({
             next: () => {
+                this.publish(ActionEnum.DELETE, model);
                 this.dataCommunicationService.notify({isDeleted: true} as DataCommunicationModel);
             }
         })

@@ -13,6 +13,9 @@ import {MatOptionSelectionChange} from "@angular/material/core";
 import {includeNCharacter, isPositive} from "../../shared/util/validators.util";
 import {DataService} from "../../services/data.service";
 import {EntityModel} from "../../model/entity.model";
+import {ActionEnum} from "../../util/action.enum";
+import {BROADCAST_SERVICE} from "../../../app.token";
+import {BroadcastService} from "../../services/broadcast.service";
 
 @Component({
     selector: 'app-book-popup',
@@ -36,7 +39,8 @@ export class BookPopupComponent implements OnInit {
                 public dialogRef: MatDialogRef<DeletePopupComponent>,
                 @Inject(MAT_DIALOG_DATA) public data: {
                     model: BookModel, list: BookModel[], isNew: boolean, title: string
-                }) {
+                },
+                @Inject(BROADCAST_SERVICE) private broadCastService: BroadcastService) {
         this.bookModel = this.data.model;
         this.initForm(this.bookModel);
     }
@@ -44,6 +48,13 @@ export class BookPopupComponent implements OnInit {
 
     public ngOnInit(): void {
         this.genres$ = this.dataService.getList(GENRES_URL) as Observable<GenreModel[]>;
+    }
+
+    private publish(type: ActionEnum, model: BookModel) {
+        this.broadCastService.publish({
+            type: type,
+            payload: model
+        });
     }
 
     private initForm(model?: BookModel): void {
@@ -70,6 +81,7 @@ export class BookPopupComponent implements OnInit {
                     next: () => {
                         const book = new BookModel(model.id, model.title, model.description, model.genreId,
                             model.publishedYear, model.authorId);
+                        this.publish(ActionEnum.CREATE, book);
                         this.dataCommunicationService.notify({
                             model: book,
                             isCreated: true,
@@ -81,6 +93,7 @@ export class BookPopupComponent implements OnInit {
             } else {
                 this.onEdit(model).subscribe({
                     next: () => {
+                        this.publish(ActionEnum.EDIT, model);
                         this.dataCommunicationService.notify({
                             model,
                             isCreated: false,

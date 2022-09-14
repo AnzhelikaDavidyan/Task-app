@@ -1,6 +1,6 @@
 import {
     Component,
-    EventEmitter,
+    EventEmitter, Inject,
     Input,
     OnChanges,
     OnDestroy,
@@ -22,6 +22,10 @@ import {ReadClassifierPipe} from "../pipe/read-classifier.pipe";
 import {EntityModel} from "../../model/entity.model";
 import {Subject, takeUntil} from "rxjs";
 import {MatSnackBar} from "@angular/material/snack-bar";
+import {BROADCAST_SERVICE} from "../../../app.token";
+import {BroadcastService} from "../../services/broadcast.service";
+import {Action} from "rxjs/internal/scheduler/Action";
+import {ActionEnum} from "../../util/action.enum";
 
 @Component({
     standalone: true,
@@ -56,7 +60,8 @@ export class TableComponent implements OnInit, OnChanges, OnDestroy {
     public dataSource!: MatTableDataSource<EntityModel[]>;
 
     constructor(private dataCommunicationService: DataCommunicationService,
-                private snackBar: MatSnackBar) {
+                private snackBar: MatSnackBar,
+                @Inject(BROADCAST_SERVICE) private broadCastService: BroadcastService) {
     }
 
     public ngOnDestroy(): void {
@@ -72,8 +77,40 @@ export class TableComponent implements OnInit, OnChanges, OnDestroy {
         }
     }
 
+    private listenCreateAction(): void {
+        this.broadCastService.messagesOfType(ActionEnum.CREATE)
+            .pipe(takeUntil(this.destroy$))
+            .subscribe((message) => {
+                this.list.push(message.payload);
+                this.dataSource._updateChangeSubscription();
+            });
+    }
+
+    private listenEditAction(): void {
+        this.broadCastService.messagesOfType(ActionEnum.EDIT)
+            .pipe(takeUntil(this.destroy$))
+            .subscribe((message) => {
+                const index = this.list.findIndex(item => item.id === message.payload.id);
+                this.list[index] = message.payload;
+                this.dataSource._updateChangeSubscription();
+            });
+    }
+
+    private listenDeleteAction(): void {
+        this.broadCastService.messagesOfType(ActionEnum.DELETE)
+            .pipe(takeUntil(this.destroy$))
+            .subscribe((message) => {
+                const index = this.list.findIndex(item => item.id === message.payload.id);
+                index > -1 ? this.list.splice(index) : null;
+                this.dataSource._updateChangeSubscription();
+            });
+    }
+
     ngOnInit(): void {
-        this.dataCommunicationService?.getNotifier()?.pipe(takeUntil(this.destroy$))
+        this.listenCreateAction();
+        this.listenEditAction();
+        this.listenDeleteAction();
+        this.dataCommunicationService?.getNotifier().pipe(takeUntil(this.destroy$))
             .subscribe(
                 {
                     next: (res: DataCommunicationModel) => {

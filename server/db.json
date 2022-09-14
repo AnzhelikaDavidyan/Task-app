@@ -18,19 +18,7 @@
     },
     {
       "id": 5,
-      "name": "for test"
-    },
-    {
-      "id": 6,
-      "name": "test"
-    },
-    {
-      "id": 8,
-      "name": "snack test"
-    },
-    {
-      "id": 9,
-      "name": "test 2"
+      "name": "asf"
     }
   ],
   "books": [
@@ -95,6 +83,14 @@
       "title": "Frankenstein",
       "description": "lorem ipsum dolor sit",
       "publishedYear": 1818,
+      "genreId": 4,
+      "authorId": 1
+    },
+    {
+      "id": 9,
+      "title": "aa",
+      "description": "45435",
+      "publishedYear": 2020,
       "genreId": 4,
       "authorId": 1
     }
