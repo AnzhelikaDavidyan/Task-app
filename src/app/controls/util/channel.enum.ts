@@ -1,5 +1,11 @@
-export enum ChannelEnum{
-    CREATE,
-    EDIT,
-    DELETE
+export enum ChannelEnum {
+    CREATE_GENRE,
+    CREATE_BOOK,
+    CREATE_AUTHOR,
+    EDIT_GENRE,
+    EDIT_BOOK,
+    EDIT_AUTHOR,
+    DELETE_GENRE,
+    DELETE_AUTHOR,
+    DELETE_BOOK
 }

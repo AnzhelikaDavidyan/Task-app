@@ -81,7 +81,7 @@ export class BookPopupComponent implements OnInit {
                     next: () => {
                         const book = new BookModel(model.id, model.title, model.description, model.genreId,
                             model.publishedYear, model.authorId);
-                        this.publish(ChannelEnum.CREATE, book);
+                        this.publish(ChannelEnum.CREATE_BOOK, book);
                         this.dataCommunicationService.notify({
                             model: book,
                             isCreated: true,
@@ -93,7 +93,7 @@ export class BookPopupComponent implements OnInit {
             } else {
                 this.onEdit(model).subscribe({
                     next: () => {
-                        this.publish(ChannelEnum.EDIT, model);
+                        this.publish(ChannelEnum.EDIT_BOOK, model);
                         this.dataCommunicationService.notify({
                             model,
                             isCreated: false,

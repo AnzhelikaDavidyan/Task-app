@@ -1,31 +1,14 @@
-import {
-    Component,
-    EventEmitter,
-    Inject,
-    Input,
-    OnChanges,
-    OnDestroy,
-    OnInit,
-    Output,
-    SimpleChanges,
-    ViewChild
-} from '@angular/core';
+import {Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges, ViewChild} from '@angular/core';
 import {MatTable, MatTableDataSource} from "@angular/material/table";
 import {MatPaginator} from "@angular/material/paginator";
 import {MatSort} from "@angular/material/sort";
-import {DataCommunicationModel, DataCommunicationService} from "../../services/data-communication.service";
-import {ColumnModel, editItem, removeItemFromList} from "../util/table.util";
+import {ColumnModel} from "../util/table.util";
 import {TypeEnum} from "../enum/type.enum";
 import {MaterialModule} from "../../../material.module";
 import {CommonModule} from "@angular/common";
 import {ReactiveFormsModule} from "@angular/forms";
 import {ReadClassifierPipe} from "../pipe/read-classifier.pipe";
 import {EntityModel} from "../../model/entity.model";
-import {Subject, takeUntil} from "rxjs";
-import {MatSnackBar} from "@angular/material/snack-bar";
-import {BROADCAST_SERVICE} from "../../../app.token";
-import {BroadcastService} from "../../services/broadcast.service";
-import {ChannelEnum} from "../../util/channel.enum";
 
 @Component({
     standalone: true,
@@ -39,9 +22,8 @@ import {ChannelEnum} from "../../util/channel.enum";
     templateUrl: './table.component.html',
     styleUrls: ['./table.component.css']
 })
-export class TableComponent implements OnInit, OnChanges, OnDestroy {
+export class TableComponent implements OnInit, OnChanges {
 
-    private destroy$ = new Subject();
 
     @Input() public list!: EntityModel[];
     @Input() public displayedColumns!: string[];
@@ -59,15 +41,9 @@ export class TableComponent implements OnInit, OnChanges, OnDestroy {
 
     public dataSource!: MatTableDataSource<EntityModel[]>;
 
-    constructor(private dataCommunicationService: DataCommunicationService,
-                private snackBar: MatSnackBar,
-                @Inject(BROADCAST_SERVICE) private broadCastService: BroadcastService) {
+    constructor() {
     }
 
-    public ngOnDestroy(): void {
-        this.destroy$.next(0);
-        this.destroy$.complete();
-    }
 
     ngOnChanges({list}: SimpleChanges): void {
         if (list && list.currentValue) {
@@ -77,65 +53,9 @@ export class TableComponent implements OnInit, OnChanges, OnDestroy {
         }
     }
 
-    private listenCreateAction(type: ChannelEnum): void {
-        this.broadCastService.messagesOfType(type)
-            .pipe(takeUntil(this.destroy$))
-            .subscribe((message) => {
-                this.list.push(message.payload as EntityModel);
-                this.dataSource._updateChangeSubscription();
-            });
-    }
-
-    private listenEditAction(type: ChannelEnum): void {
-        this.broadCastService.messagesOfType(type)
-            .pipe(takeUntil(this.destroy$))
-            .subscribe((message) => {
-                editItem(this.list, message.payload as EntityModel);
-                this.dataSource._updateChangeSubscription();
-            });
-    }
-
-    private listenDeleteAction(type: ChannelEnum): void {
-        this.broadCastService.messagesOfType(type)
-            .pipe(takeUntil(this.destroy$))
-            .subscribe((message) => {
-                removeItemFromList(this.list, message.payload as EntityModel);
-                this.dataSource._updateChangeSubscription();
-            });
-    }
 
     ngOnInit(): void {
-        this.listenCreateAction(ChannelEnum.CREATE);
-        this.listenEditAction(ChannelEnum.EDIT);
-        this.listenDeleteAction(ChannelEnum.DELETE);
-        this.dataCommunicationService?.getNotifier().pipe(takeUntil(this.destroy$))
-            .subscribe(
-                {
-                    next: (res: DataCommunicationModel) => {
-                        if (res.isDeleted || res.isCreated || res.isEdited) {
-                            if (res.isCreated) {
-                                this.list.push(res.model);
-                                this.openSnackBar('Data has been successfully added.');
-                            }
-                            if (res.isEdited) {
-                                const index = this.list.findIndex(item => item.id === res.model.id);
-                                this.list[index] = res.model;
-                                this.openSnackBar('Data has been successfully edited.');
-                            }
-                            if (res.isDeleted) {
-                                this.openSnackBar('Data has been successfully deleted.');
-                            }
-                            this.dataSource._updateChangeSubscription();
-                        }
-                    }
-                }
-            )
-    }
 
-    private openSnackBar(message: string) {
-        this.snackBar.open(message, '', {
-            duration: 2000,
-        });
     }
 
     public onAdd(): void {

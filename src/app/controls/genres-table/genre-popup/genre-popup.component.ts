@@ -66,7 +66,7 @@ export class GenrePopupComponent implements OnInit {
                 this.dataService.createItem(GENRES_URL, model).subscribe({
                     next: () => {
                         const genre = new GenreModel(model.id, model.name);
-                        this.publish(ChannelEnum.CREATE, genre);
+                        this.publish(ChannelEnum.CREATE_GENRE, genre);
                         this.notify({
                             model: genre,
                             isCreated: true,
@@ -78,7 +78,7 @@ export class GenrePopupComponent implements OnInit {
             } else {
                 this.onEdit(model).subscribe({
                     next: () => {
-                        this.publish(ChannelEnum.EDIT, model);
+                        this.publish(ChannelEnum.EDIT_GENRE, model);
                         this.notify({
                             model,
                             isCreated: false,

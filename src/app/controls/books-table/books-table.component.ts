@@ -5,13 +5,22 @@ import {DeletePopupComponent, DeletePopupI} from '../shared/delete-popup/delete-
 import {BookPopupComponent} from './book-popup/book-popup.component';
 import {BookModel} from './model/book.model';
 import {BOOKS_URL} from "../util/url";
-import {ColumnModel, popupGeneralConfig, PopupInfo, RelatedDataI, removeItemFromList} from "../shared/util/table.util";
+import {
+    ColumnModel,
+    editItem,
+    popupGeneralConfig,
+    PopupInfo,
+    RelatedDataI,
+    removeItemFromList
+} from "../shared/util/table.util";
 import {TypeEnum} from "../shared/enum/type.enum";
 import {DataService} from "../services/data.service";
 import {EntityModel} from "../model/entity.model";
 import {BROADCAST_SERVICE} from "../../app.token";
 import {BroadcastService} from "../services/broadcast.service";
 import {ChannelEnum} from "../util/channel.enum";
+import {DataCommunicationModel, DataCommunicationService} from "../services/data-communication.service";
+import {MatSnackBar} from "@angular/material/snack-bar";
 
 @Component({
     selector: 'app-books-table',
@@ -33,11 +42,16 @@ export class BooksTableComponent implements OnInit {
     constructor(
         public dialog: MatDialog,
         private dataService: DataService,
-        @Inject(BROADCAST_SERVICE) private broadCastService: BroadcastService) {
+        @Inject(BROADCAST_SERVICE) private broadCastService: BroadcastService,
+        private dataCommunicationService: DataCommunicationService,
+        private snackBar: MatSnackBar,) {
     }
 
     ngOnInit(): void {
-        this.listenDeleteAction();
+        this.listenCreateAction(ChannelEnum.CREATE_BOOK);
+        this.listenEditAction(ChannelEnum.EDIT_BOOK);
+        this.listenDeleteAction(ChannelEnum.DELETE_BOOK);
+        this.notifyData();
         this.dataService.getList(BOOKS_URL).pipe(
             takeUntil(this.destroy$)
         ).subscribe({
@@ -47,11 +61,56 @@ export class BooksTableComponent implements OnInit {
         });
     }
 
-    private listenDeleteAction(): void {
-        this.broadCastService.messagesOfType(ChannelEnum.DELETE)
+    private openSnackBar(message: string) {
+        this.snackBar.open(message, '', {
+            duration: 2000,
+        });
+    }
+
+    private notifyData(): void {
+        this.dataCommunicationService.getNotifier().pipe(takeUntil(this.destroy$))
+            .subscribe({
+                next: (res: DataCommunicationModel) => {
+                    if (res.isCreated) {
+                        this.list.push(res.model as BookModel);
+                        this.openSnackBar('Data has been successfully added.');
+                    }
+                    if (res.isEdited) {
+                        editItem(this.list, res.model as BookModel);
+                        this.openSnackBar('Data has been successfully edited.');
+                    }
+                    if (res.isDeleted) {
+                        this.openSnackBar('Data has been successfully deleted.');
+                    }
+                    this.list = this.list.slice();
+
+                }
+            });
+    }
+
+    private listenDeleteAction(type: ChannelEnum): void {
+        this.broadCastService.messagesOfType(type)
             .pipe(takeUntil(this.destroy$))
             .subscribe((message) => {
-                removeItemFromList(this.list, message.payload);
+                removeItemFromList(this.list, message.payload as BookModel);
+                this.list = this.list.slice();
+            });
+    }
+
+    private listenCreateAction(type: ChannelEnum): void {
+        this.broadCastService.messagesOfType(type)
+            .pipe(takeUntil(this.destroy$))
+            .subscribe((message) => {
+                this.list.push(message.payload as BookModel);
+                this.list = this.list.slice();
+            });
+    }
+
+    private listenEditAction(type: ChannelEnum): void {
+        this.broadCastService.messagesOfType(type)
+            .pipe(takeUntil(this.destroy$))
+            .subscribe((message) => {
+                editItem(this.list, message.payload as BookModel);
                 this.list = this.list.slice();
             });
     }
@@ -100,7 +159,7 @@ export class BooksTableComponent implements OnInit {
         removeItemFromList(context.list, model);
         context.list = context.list.slice();
         context.broadCastService.publish({
-            type: ChannelEnum.DELETE,
+            type: ChannelEnum.DELETE_BOOK,
             payload: model
         });
         context.dataService.deleteItem(url, model, isWithRelatedData, relatedData)

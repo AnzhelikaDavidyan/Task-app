@@ -1,7 +1,14 @@
 import {Component, Inject, OnInit} from '@angular/core';
 import {Subject, takeUntil} from "rxjs";
 import {AuthorModel} from "./model/author.model";
-import {ColumnModel, popupGeneralConfig, PopupInfo, RelatedDataI, removeItemFromList} from "../shared/util/table.util";
+import {
+    ColumnModel,
+    editItem,
+    popupGeneralConfig,
+    PopupInfo,
+    RelatedDataI,
+    removeItemFromList
+} from "../shared/util/table.util";
 import {MatDialog} from "@angular/material/dialog";
 import {DeletePopupComponent, DeletePopupI} from "../shared/delete-popup/delete-popup.component";
 import {AuthorPopupComponent} from "./author-popup/author-popup.component";
@@ -12,6 +19,8 @@ import {BROADCAST_SERVICE} from "../../app.token";
 import {BroadcastService} from "../services/broadcast.service";
 import {AUTHORS_URL, BOOKS_URL, GENRES_URL} from "../util/url";
 import {ChannelEnum} from "../util/channel.enum";
+import {DataCommunicationModel, DataCommunicationService} from "../services/data-communication.service";
+import {MatSnackBar} from "@angular/material/snack-bar";
 
 @Component({
     selector: 'app-authors-table',
@@ -33,11 +42,16 @@ export class AuthorsTableComponent implements OnInit {
 
     constructor(public dialog: MatDialog,
                 private dataService: DataService,
-                @Inject(BROADCAST_SERVICE) private broadCastService: BroadcastService) {
+                @Inject(BROADCAST_SERVICE) private broadCastService: BroadcastService,
+                private dataCommunicationService: DataCommunicationService,
+                private snackBar: MatSnackBar,) {
     }
 
     public ngOnInit(): void {
-        this.listenDeleteAction();
+        this.listenCreateAction(ChannelEnum.CREATE_AUTHOR);
+        this.listenEditAction(ChannelEnum.EDIT_AUTHOR);
+        this.listenDeleteAction(ChannelEnum.DELETE_AUTHOR);
+        this.notifyData();
         this.dataService.getList(AUTHORS_URL).pipe(
             takeUntil(this.destroy$)
         ).subscribe({
@@ -47,13 +61,58 @@ export class AuthorsTableComponent implements OnInit {
         });
     }
 
-    private listenDeleteAction(): void {
-        this.broadCastService.messagesOfType(ChannelEnum.DELETE)
+    private notifyData(): void {
+        this.dataCommunicationService.getNotifier().pipe(takeUntil(this.destroy$))
+            .subscribe({
+                next: (res: DataCommunicationModel) => {
+                    if (res.isCreated) {
+                        this.list.push(res.model as AuthorModel);
+                        this.openSnackBar('Data has been successfully added.');
+                    }
+                    if (res.isEdited) {
+                        editItem(this.list, res.model as AuthorModel);
+                        this.openSnackBar('Data has been successfully edited.');
+                    }
+                    if (res.isDeleted) {
+                        this.openSnackBar('Data has been successfully deleted.');
+                    }
+                    this.list = this.list.slice();
+
+                }
+            });
+    }
+
+    private listenDeleteAction(type: ChannelEnum): void {
+        this.broadCastService.messagesOfType(type)
             .pipe(takeUntil(this.destroy$))
             .subscribe((message) => {
-                removeItemFromList(this.list, message.payload);
+                removeItemFromList(this.list, message.payload as AuthorModel);
                 this.list = this.list.slice();
             });
+    }
+
+    private listenCreateAction(type: ChannelEnum): void {
+        this.broadCastService.messagesOfType(type)
+            .pipe(takeUntil(this.destroy$))
+            .subscribe((message) => {
+                this.list.push(message.payload as AuthorModel);
+                this.list = this.list.slice();
+            });
+    }
+
+    private listenEditAction(type: ChannelEnum): void {
+        this.broadCastService.messagesOfType(type)
+            .pipe(takeUntil(this.destroy$))
+            .subscribe((message) => {
+                editItem(this.list, message.payload as AuthorModel);
+                this.list = this.list.slice();
+            });
+    }
+
+    private openSnackBar(message: string) {
+        this.snackBar.open(message, '', {
+            duration: 2000,
+        });
     }
 
     public add(): void {
@@ -95,7 +154,7 @@ export class AuthorsTableComponent implements OnInit {
         removeItemFromList(context.list, model);
         context.list = context.list.slice();
         context.broadCastService.publish({
-            type: ChannelEnum.DELETE,
+            type: ChannelEnum.DELETE_AUTHOR,
             payload: model
         });
         context.dataService.deleteItem(url, model, isWithRelatedData, relatedData)

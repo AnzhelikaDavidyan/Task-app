@@ -75,7 +75,7 @@ export class AuthorPopupComponent implements OnInit {
                 this.dataService.createItem(AUTHORS_URL, model).subscribe({
                     next: () => {
                         const authorModel = new AuthorModel(model.id, model.firstName, model.lastName, model.genreId);
-                        this.publish(ChannelEnum.CREATE, authorModel);
+                        this.publish(ChannelEnum.CREATE_AUTHOR, authorModel);
                         this.dataCommunicationService.notify({
                             model: authorModel,
                             isCreated: true,
@@ -87,7 +87,7 @@ export class AuthorPopupComponent implements OnInit {
             } else {
                 this.onEdit(model).subscribe({
                     next: () => {
-                        this.publish(ChannelEnum.EDIT, model);
+                        this.publish(ChannelEnum.EDIT_AUTHOR, model);
                         this.dataCommunicationService.notify({
                             model,
                             isCreated: false,

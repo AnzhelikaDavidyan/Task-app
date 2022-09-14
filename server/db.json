@@ -19,6 +19,22 @@
     {
       "id": 5,
       "name": "romance"
+    },
+    {
+      "id": 6,
+      "name": "thriller"
+    },
+    {
+      "id": 7,
+      "name": "888"
+    },
+    {
+      "id": 8,
+      "name": "fdf"
+    },
+    {
+      "id": 9,
+      "name": "000"
     }
   ],
   "books": [
@@ -85,14 +101,6 @@
       "publishedYear": 1818,
       "genreId": 4,
       "authorId": 1
-    },
-    {
-      "id": 9,
-      "title": "War and Peace",
-      "description": "111",
-      "publishedYear": 1111,
-      "genreId": 1,
-      "authorId": 5
     }
   ],
   "authors": [
@@ -149,6 +157,18 @@
       "firstName": "Danzy",
       "lastName": "Senna",
       "genreId": 4
+    },
+    {
+      "id": 10,
+      "firstName": "test",
+      "lastName": "test",
+      "genreId": 9
+    },
+    {
+      "id": 11,
+      "firstName": "test",
+      "lastName": "test",
+      "genreId": 5
     }
   ]
 }
