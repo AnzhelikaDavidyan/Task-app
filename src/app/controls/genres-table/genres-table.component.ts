@@ -1,15 +1,18 @@
-import {Component, OnInit, ViewChild} from '@angular/core';
+import {Component, Inject, OnInit, ViewChild} from '@angular/core';
 import {Subject, takeUntil} from "rxjs";
 import {MatTable} from "@angular/material/table";
 import {GenreModel} from "./model/genre.model";
 import {MatDialog} from "@angular/material/dialog";
 import {AUTHORS_URL, BOOKS_URL, GENRES_URL} from "../util/url";
-import {ColumnModel, PopupInfo, RelatedDataI} from "../shared/util/table.util";
-import {DeletePopupI} from "../shared/delete-popup/delete-popup.component";
+import {ColumnModel, popupGeneralConfig, PopupInfo, RelatedDataI, removeItemFromList} from "../shared/util/table.util";
+import {DeletePopupComponent, DeletePopupI} from "../shared/delete-popup/delete-popup.component";
 import {GenrePopupComponent} from "./genre-popup/genre-popup.component";
 import {TypeEnum} from "../shared/enum/type.enum";
 import {DataService} from "../services/data.service";
 import {EntityModel} from "../model/entity.model";
+import {ActionEnum} from "../util/action.enum";
+import {BROADCAST_SERVICE} from "../../app.token";
+import {BroadcastService} from "../services/broadcast.service";
 
 @Component({
     selector: 'app-genres-table',
@@ -29,10 +32,12 @@ export class GenresTableComponent implements OnInit {
     @ViewChild(MatTable) table!: MatTable<any>;
 
     constructor(public dialog: MatDialog,
-                private dataService: DataService) {
+                private dataService: DataService,
+                @Inject(BROADCAST_SERVICE) private broadCastService: BroadcastService) {
     }
 
     public ngOnInit(): void {
+        this.listenDeleteAction();
         this.dataService.getList(GENRES_URL).pipe(
             takeUntil(this.destroy$)
         ).subscribe({
@@ -42,6 +47,14 @@ export class GenresTableComponent implements OnInit {
         });
     }
 
+    private listenDeleteAction(): void {
+        this.broadCastService.messagesOfType(ActionEnum.DELETE)
+            .pipe(takeUntil(this.destroy$))
+            .subscribe((message) => {
+                removeItemFromList(this.list, message.payload);
+                this.list = this.list.slice();
+            });
+    }
 
     public add(): void {
         this.dialog.open(GenrePopupComponent, {
@@ -66,8 +79,24 @@ export class GenresTableComponent implements OnInit {
             filter: `genreId=${model.id}`,
             urls: [AUTHORS_URL, BOOKS_URL]
         } as RelatedDataI;
-        this.dataService.deleteItem(GENRES_URL, model, this.list, popupInfo, true, relatedDataModel);
+        const config = popupGeneralConfig(popupInfo);
+        config.data.yesAction = this.onYesDeleteAction;
+        config.data.yesArgs = [this, GENRES_URL, model, popupInfo, relatedDataModel];
+        this.dialog.open(DeletePopupComponent, config);
     }
+
+    private onYesDeleteAction(context: any, url: string, model: GenreModel, isWithRelatedData: boolean,
+                              relatedData: RelatedDataI): void {
+        removeItemFromList(context.list, model);
+        context.list = context.list.slice();
+        context.broadCastService.publish({
+            type: ActionEnum.DELETE,
+            payload: model
+        });
+        context.dataService.deleteItem(url, model, isWithRelatedData, relatedData)
+            .subscribe()
+    }
+
 
     public edit([event, model]: [MouseEvent, EntityModel]): void {
         this.dialog.open(GenrePopupComponent, {

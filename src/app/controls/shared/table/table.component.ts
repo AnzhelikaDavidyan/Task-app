@@ -110,28 +110,28 @@ export class TableComponent implements OnInit, OnChanges, OnDestroy {
         this.listenCreateAction();
         this.listenEditAction();
         this.listenDeleteAction();
-        this.dataCommunicationService?.getNotifier().pipe(takeUntil(this.destroy$))
-            .subscribe(
-                {
-                    next: (res: DataCommunicationModel) => {
-                        if (res.isDeleted || res.isCreated || res.isEdited) {
-                            if (res.isCreated) {
-                                this.list.push(res.model);
-                                this.openSnackBar('Data has been successfully added.');
-                            }
-                            if (res.isEdited) {
-                                const index = this.list.findIndex(item => item.id === res.model.id);
-                                this.list[index] = res.model;
-                                this.openSnackBar('Data has been successfully edited.');
-                            }
-                            if (res.isDeleted) {
-                                this.openSnackBar('Data has been successfully deleted.');
-                            }
-                            this.dataSource._updateChangeSubscription();
-                        }
-                    }
-                }
-            )
+        // this.dataCommunicationService?.getNotifier().pipe(takeUntil(this.destroy$))
+        //     .subscribe(
+        //         {
+        //             next: (res: DataCommunicationModel) => {
+        //                 if (res.isDeleted || res.isCreated || res.isEdited) {
+        //                     if (res.isCreated) {
+        //                         this.list.push(res.model);
+        //                         this.openSnackBar('Data has been successfully added.');
+        //                     }
+        //                     if (res.isEdited) {
+        //                         const index = this.list.findIndex(item => item.id === res.model.id);
+        //                         this.list[index] = res.model;
+        //                         this.openSnackBar('Data has been successfully edited.');
+        //                     }
+        //                     if (res.isDeleted) {
+        //                         this.openSnackBar('Data has been successfully deleted.');
+        //                     }
+        //                     this.dataSource._updateChangeSubscription();
+        //                 }
+        //             }
+        //         }
+        //     )
     }
 
     private openSnackBar(message: string) {

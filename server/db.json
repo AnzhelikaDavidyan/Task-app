@@ -81,14 +81,6 @@
       "publishedYear": 1818,
       "genreId": 4,
       "authorId": 1
-    },
-    {
-      "id": 9,
-      "title": "aa",
-      "description": "45435",
-      "publishedYear": 2020,
-      "genreId": 4,
-      "authorId": 1
     }
   ],
   "authors": [
@@ -139,12 +131,6 @@
       "firstName": "Charlotte",
       "lastName": "Brontë",
       "genreId": 1
-    },
-    {
-      "id": 9,
-      "firstName": "TEST",
-      "lastName": "TEST",
-      "genreId": 4
     }
   ]
 }

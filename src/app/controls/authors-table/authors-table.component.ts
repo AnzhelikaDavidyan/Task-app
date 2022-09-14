@@ -1,15 +1,17 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, Inject, OnInit} from '@angular/core';
 import {Subject, takeUntil} from "rxjs";
-import {GenreModel} from "../genres-table/model/genre.model";
 import {AuthorModel} from "./model/author.model";
-import {ColumnModel, PopupInfo, RelatedDataI} from "../shared/util/table.util";
+import {ColumnModel, popupGeneralConfig, PopupInfo, RelatedDataI, removeItemFromList} from "../shared/util/table.util";
 import {MatDialog} from "@angular/material/dialog";
 import {AUTHORS_URL, BOOKS_URL, GENRES_URL} from "../util/url";
-import {DeletePopupI} from "../shared/delete-popup/delete-popup.component";
+import {DeletePopupComponent, DeletePopupI} from "../shared/delete-popup/delete-popup.component";
 import {AuthorPopupComponent} from "./author-popup/author-popup.component";
 import {TypeEnum} from "../shared/enum/type.enum";
 import {DataService} from "../services/data.service";
 import {EntityModel} from "../model/entity.model";
+import {BROADCAST_SERVICE} from "../../app.token";
+import {BroadcastService} from "../services/broadcast.service";
+import {ActionEnum} from "../util/action.enum";
 
 @Component({
     selector: 'app-authors-table',
@@ -30,10 +32,12 @@ export class AuthorsTableComponent implements OnInit {
     public list: AuthorModel [] = [];
 
     constructor(public dialog: MatDialog,
-                private dataService: DataService) {
+                private dataService: DataService,
+                @Inject(BROADCAST_SERVICE) private broadCastService: BroadcastService) {
     }
 
     public ngOnInit(): void {
+        this.listenDeleteAction();
         this.dataService.getList(AUTHORS_URL).pipe(
             takeUntil(this.destroy$)
         ).subscribe({
@@ -43,18 +47,33 @@ export class AuthorsTableComponent implements OnInit {
         });
     }
 
+    private listenDeleteAction(): void {
+        this.broadCastService.messagesOfType(ActionEnum.DELETE)
+            .pipe(takeUntil(this.destroy$))
+            .subscribe((message) => {
+                removeItemFromList(this.list, message.payload);
+                this.list = this.list.slice();
+            });
+    }
+
     public add(): void {
         this.dialog.open(AuthorPopupComponent, {
             data: {
                 isNew: true,
                 list: this.list,
-                title: 'Add Author'
-            } as PopupInfo,
+                title: 'Add Author',
+                saveAction: this.onSave,
+                saveArgs: []
+            },
             disableClose: true,
             autoFocus: false,
             width: '400px',
             height: 'auto'
         });
+    }
+
+    private onSave() {
+
     }
 
     public delete(model: EntityModel): void {
@@ -66,7 +85,21 @@ export class AuthorsTableComponent implements OnInit {
             filter: `authorId=${model.id}`,
             urls: [BOOKS_URL]
         } as RelatedDataI;
-        this.dataService.deleteItem(AUTHORS_URL, model, this.list, popupInfo, true, relatedDataModel);
+        const config = popupGeneralConfig(popupInfo);
+        config.data.yesAction = this.onYesDeleteAction;
+        config.data.yesArgs = [this, AUTHORS_URL, model, popupInfo, relatedDataModel];
+        this.dialog.open(DeletePopupComponent, config);
+    }
+
+    private onYesDeleteAction(context: any, url: string, model: AuthorModel, isWithRelatedData: boolean, relatedData: RelatedDataI): void {
+        removeItemFromList(context.list, model);
+        context.list = context.list.slice();
+        context.broadCastService.publish({
+            type: ActionEnum.DELETE,
+            payload: model
+        });
+        context.dataService.deleteItem(url, model, isWithRelatedData, relatedData)
+            .subscribe()
     }
 
     public edit([event, model]: [MouseEvent, EntityModel]): void {

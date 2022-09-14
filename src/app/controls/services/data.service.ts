@@ -1,27 +1,18 @@
-import {Inject, Injectable} from "@angular/core";
+import {Injectable} from "@angular/core";
 import {map, mergeMap, Observable, of, switchMap, zip} from "rxjs";
 import {BookModel} from "../books-table/model/book.model";
 import {GenreModel} from "../genres-table/model/genre.model";
 import {AuthorModel} from "../authors-table/model/author.model";
 import {AUTHORS_URL, BOOKS_URL, GENRES_URL} from "../util/url";
 import {CrudService} from "./crud.service";
-import {MatDialog, MatDialogConfig} from "@angular/material/dialog";
-import {DeletePopupComponent, DeletePopupI} from "../shared/delete-popup/delete-popup.component";
 import {RelatedDataI} from "../shared/util/table.util";
-import {DataCommunicationModel, DataCommunicationService} from "./data-communication.service";
 import {EntityModel} from "../model/entity.model";
-import {ActionEnum} from "../util/action.enum";
-import {BROADCAST_SERVICE} from "../../app.token";
-import {BroadcastService} from "./broadcast.service";
 
 @Injectable({
     providedIn: 'root'
 })
 export class DataService {
-    constructor(private crudService: CrudService,
-                public dialog: MatDialog,
-                private dataCommunicationService: DataCommunicationService,
-                @Inject(BROADCAST_SERVICE) private broadCastService: BroadcastService) {
+    constructor(private crudService: CrudService) {
     }
 
     public getList(url: string): Observable<EntityModel[]> {
@@ -80,70 +71,18 @@ export class DataService {
             );
     }
 
-    public deleteItem(url: string, model: any, list: any[],
-                      popupInfo: DeletePopupI, isWithRelatedData: boolean = false,
-                      relatedDataModel?: RelatedDataI): void {
-        const config = this.getDeletePopupGeneralConfig(popupInfo);
-        config.data.yesAction = this.onYesAction;
-        config.data.yesArgs = [url, model, list, isWithRelatedData, relatedDataModel];
-        this.dialog.open(DeletePopupComponent, config);
-    }
-
-    private getDeletePopupGeneralConfig(data: DeletePopupI): MatDialogConfig {
-        return {
-            disableClose: true,
-            autoFocus: false,
-            width: '400px',
-            height: 'auto',
-            data: {
-                context: this,
-                title: data.title,
-                message: data.message
-            }
-        };
-    }
-
-    private publish(type: ActionEnum, model: EntityModel) {
-        this.broadCastService.publish({
-            type: type,
-            payload: model
-        });
-    }
-
-    private onYesAction(url: string, model: EntityModel, list: any[],
-                        isWithRelatedData: boolean = false,
-                        relatedData?: RelatedDataI) {
-        this.onDelete(url, model, list, isWithRelatedData, relatedData)
-            .subscribe({
-                next: () => {
-                    this.publish(ActionEnum.DELETE, model);
-                    this.dataCommunicationService.notify({isDeleted: true} as DataCommunicationModel);
-                }
-            })
-    }
-
-    private onDelete(url: string, model: EntityModel, list: any[],
-                     isWithRelatedData: boolean = false,
-                     relatedData?: RelatedDataI): Observable<boolean> {
-        return this.removeItem(url, model, list).pipe(
+    public deleteItem(url: string, model: EntityModel,
+                      isWithRelatedData: boolean = false,
+                      relatedData?: RelatedDataI): Observable<EntityModel> {
+        return this.crudService.removeItem(url, model).pipe(
             switchMap((_) => {
                 if (isWithRelatedData && relatedData) {
                     return this.removeRelatedData(relatedData);
                 }
                 return of(true);
-            })
-        )
-    }
-
-    private removeItem(url: string, model: any, list: any[]): Observable<boolean> {
-        const index = list.indexOf(model);
-        if (index > -1) {
-            list.splice(index, 1);
-            return this.crudService.removeItem(url, model).pipe(
-                map(() => true)
-            );
-        }
-        return of(false);
+            }),
+            map(_ => model)
+        );
     }
 
     private removeRelatedData(relatedData: RelatedDataI): Observable<boolean> {

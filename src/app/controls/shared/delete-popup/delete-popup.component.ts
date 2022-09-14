@@ -56,4 +56,8 @@ export class DeletePopupComponent implements OnInit {
 export interface DeletePopupI {
     title: string;
     message: string;
+    yesAction: Function;
+    yesArgs: any[];
+    noAction: Function;
+    noArgs: any[];
 }

@@ -33,7 +33,12 @@ export class AuthorPopupComponent implements OnInit {
                 private dataCommunicationService: DataCommunicationService,
                 public dialogRef: MatDialogRef<DeletePopupComponent>,
                 @Inject(MAT_DIALOG_DATA) public data: {
-                    model: AuthorModel, list: EntityModel[], isNew: boolean, title: string
+                    model: AuthorModel,
+                    list: EntityModel[],
+                    isNew: boolean,
+                    title: string,
+                    saveAction: Function,
+                    saveArgs: any[],
                 },
                 @Inject(BROADCAST_SERVICE) private broadCastService: BroadcastService) {
         this.authorModel = this.data.model;

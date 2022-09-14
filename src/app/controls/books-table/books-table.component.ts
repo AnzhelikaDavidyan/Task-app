@@ -1,14 +1,17 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, Inject, OnInit} from '@angular/core';
 import {MatDialog} from '@angular/material/dialog';
 import {Subject, takeUntil} from 'rxjs';
-import {DeletePopupI} from '../shared/delete-popup/delete-popup.component';
+import {DeletePopupComponent, DeletePopupI} from '../shared/delete-popup/delete-popup.component';
 import {BookPopupComponent} from './book-popup/book-popup.component';
 import {BookModel} from './model/book.model';
 import {BOOKS_URL} from "../util/url";
-import {ColumnModel, PopupInfo} from "../shared/util/table.util";
+import {ColumnModel, popupGeneralConfig, PopupInfo, RelatedDataI, removeItemFromList} from "../shared/util/table.util";
 import {TypeEnum} from "../shared/enum/type.enum";
 import {DataService} from "../services/data.service";
 import {EntityModel} from "../model/entity.model";
+import {BROADCAST_SERVICE} from "../../app.token";
+import {BroadcastService} from "../services/broadcast.service";
+import {ActionEnum} from "../util/action.enum";
 
 @Component({
     selector: 'app-books-table',
@@ -29,10 +32,12 @@ export class BooksTableComponent implements OnInit {
 
     constructor(
         public dialog: MatDialog,
-        private dataService: DataService) {
+        private dataService: DataService,
+        @Inject(BROADCAST_SERVICE) private broadCastService: BroadcastService) {
     }
 
     ngOnInit(): void {
+        this.listenDeleteAction();
         this.dataService.getList(BOOKS_URL).pipe(
             takeUntil(this.destroy$)
         ).subscribe({
@@ -40,6 +45,15 @@ export class BooksTableComponent implements OnInit {
                 this.list = books as BookModel[];
             }
         });
+    }
+
+    private listenDeleteAction(): void {
+        this.broadCastService.messagesOfType(ActionEnum.DELETE)
+            .pipe(takeUntil(this.destroy$))
+            .subscribe((message) => {
+                removeItemFromList(this.list, message.payload);
+                this.list = this.list.slice();
+            });
     }
 
     public add(): void {
@@ -75,7 +89,22 @@ export class BooksTableComponent implements OnInit {
             title: 'Removing an Item',
             message: ' Are you sure you want to remove the selected Item(s) ?'
         } as DeletePopupI;
-        this.dataService.deleteItem(BOOKS_URL, model, this.list, popupInfo);
+        const config = popupGeneralConfig(popupInfo);
+        config.data.yesAction = this.onYesDeleteAction;
+        config.data.yesArgs = [this, BOOKS_URL, model, popupInfo];
+        this.dialog.open(DeletePopupComponent, config);
+    }
+
+    private onYesDeleteAction(context: any, url: string, model: BookModel, isWithRelatedData: boolean = false,
+                              relatedData: RelatedDataI): void {
+        removeItemFromList(context.list, model);
+        context.list = context.list.slice();
+        context.broadCastService.publish({
+            type: ActionEnum.DELETE,
+            payload: model
+        });
+        context.dataService.deleteItem(url, model, isWithRelatedData, relatedData)
+            .subscribe()
     }
 
     public ngOnDestroy(): void {
