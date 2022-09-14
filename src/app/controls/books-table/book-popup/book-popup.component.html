@@ -25,6 +25,9 @@
             <mat-form-field appearance="fill">
                 <mat-label>Description</mat-label>
                 <textarea matInput formControlName="description"></textarea>
+                <mat-error>
+                    Description must not exceed max length.
+                </mat-error>
             </mat-form-field>
 
             <mat-form-field appearance="outline">
@@ -35,7 +38,7 @@
                         {{item.name }}
                     </mat-option>
                 </mat-select>
-                <mat-error>AAA</mat-error>
+                <mat-error>Genre is required.</mat-error>
             </mat-form-field>
 
             <mat-form-field appearance="outline">
@@ -46,7 +49,7 @@
                         {{item.firstName + ' ' + item.lastName }}
                     </mat-option>
                 </mat-select>
-                <mat-error>BBB</mat-error>
+                <mat-error>Author is required.</mat-error>
             </mat-form-field>
         </form>
 
