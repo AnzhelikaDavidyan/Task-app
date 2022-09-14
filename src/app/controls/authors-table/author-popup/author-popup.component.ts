@@ -11,9 +11,9 @@ import {AUTHORS_URL, GENRES_URL} from "../../util/url";
 import {MatOptionSelectionChange} from "@angular/material/core";
 import {DataService} from "../../services/data.service";
 import {EntityModel} from "../../model/entity.model";
-import {ActionEnum} from "../../util/action.enum";
 import {BROADCAST_SERVICE} from "../../../app.token";
 import {BroadcastService} from "../../services/broadcast.service";
+import {ChannelEnum} from "../../util/channel.enum";
 
 @Component({
     selector: 'app-author-popup',
@@ -61,7 +61,7 @@ export class AuthorPopupComponent implements OnInit {
         this.genreId = this.formGroup.get('genreId') as FormControl;
     }
 
-    private publish(type: ActionEnum, model: AuthorModel) {
+    private publish(type: ChannelEnum, model: AuthorModel) {
         this.broadCastService.publish({
             type: type,
             payload: model
@@ -75,7 +75,7 @@ export class AuthorPopupComponent implements OnInit {
                 this.dataService.createItem(AUTHORS_URL, model).subscribe({
                     next: () => {
                         const authorModel = new AuthorModel(model.id, model.firstName, model.lastName, model.genreId);
-                        this.publish(ActionEnum.CREATE, authorModel);
+                        this.publish(ChannelEnum.CREATE, authorModel);
                         this.dataCommunicationService.notify({
                             model: authorModel,
                             isCreated: true,
@@ -87,7 +87,7 @@ export class AuthorPopupComponent implements OnInit {
             } else {
                 this.onEdit(model).subscribe({
                     next: () => {
-                        this.publish(ActionEnum.EDIT, model);
+                        this.publish(ChannelEnum.EDIT, model);
                         this.dataCommunicationService.notify({
                             model,
                             isCreated: false,

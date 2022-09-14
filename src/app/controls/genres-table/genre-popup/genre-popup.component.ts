@@ -11,7 +11,7 @@ import {DataService} from "../../services/data.service";
 import {duplicate} from "../../shared/util/validators.util";
 import {BROADCAST_SERVICE} from "../../../app.token";
 import {BroadcastService} from "../../services/broadcast.service";
-import {ActionEnum} from "../../util/action.enum";
+import {ChannelEnum} from "../../util/channel.enum";
 
 @Component({
     selector: 'app-genre-popup',
@@ -48,7 +48,7 @@ export class GenrePopupComponent implements OnInit {
         });
     }
 
-    private publish(type: ActionEnum, model: GenreModel) {
+    private publish(type: ChannelEnum, model: GenreModel) {
         this.broadCastService.publish({
             type: type,
             payload: model
@@ -66,7 +66,7 @@ export class GenrePopupComponent implements OnInit {
                 this.dataService.createItem(GENRES_URL, model).subscribe({
                     next: () => {
                         const genre = new GenreModel(model.id, model.name);
-                        this.publish(ActionEnum.CREATE, genre);
+                        this.publish(ChannelEnum.CREATE, genre);
                         this.notify({
                             model: genre,
                             isCreated: true,
@@ -78,7 +78,7 @@ export class GenrePopupComponent implements OnInit {
             } else {
                 this.onEdit(model).subscribe({
                     next: () => {
-                        this.publish(ActionEnum.EDIT, model);
+                        this.publish(ChannelEnum.EDIT, model);
                         this.notify({
                             model,
                             isCreated: false,

@@ -10,9 +10,9 @@ import {GenrePopupComponent} from "./genre-popup/genre-popup.component";
 import {TypeEnum} from "../shared/enum/type.enum";
 import {DataService} from "../services/data.service";
 import {EntityModel} from "../model/entity.model";
-import {ActionEnum} from "../util/action.enum";
 import {BROADCAST_SERVICE} from "../../app.token";
 import {BroadcastService} from "../services/broadcast.service";
+import {ChannelEnum} from "../util/channel.enum";
 
 @Component({
     selector: 'app-genres-table',
@@ -37,7 +37,6 @@ export class GenresTableComponent implements OnInit {
     }
 
     public ngOnInit(): void {
-        this.listenDeleteAction();
         this.dataService.getList(GENRES_URL).pipe(
             takeUntil(this.destroy$)
         ).subscribe({
@@ -45,15 +44,6 @@ export class GenresTableComponent implements OnInit {
                 this.list = genres as GenreModel[];
             }
         });
-    }
-
-    private listenDeleteAction(): void {
-        this.broadCastService.messagesOfType(ActionEnum.DELETE)
-            .pipe(takeUntil(this.destroy$))
-            .subscribe((message) => {
-                removeItemFromList(this.list, message.payload);
-                this.list = this.list.slice();
-            });
     }
 
     public add(): void {
@@ -90,7 +80,7 @@ export class GenresTableComponent implements OnInit {
         removeItemFromList(context.list, model);
         context.list = context.list.slice();
         context.broadCastService.publish({
-            type: ActionEnum.DELETE,
+            type: ChannelEnum.DELETE,
             payload: model
         });
         context.dataService.deleteItem(url, model, isWithRelatedData, relatedData)

@@ -40,8 +40,13 @@ export function popupGeneralConfig(data: DeletePopupI) {
 }
 
 export function removeItemFromList(list: EntityModel[], item: EntityModel) {
-    const index = list.indexOf(item);
+    const index = list.findIndex(i => i.id === item.id);
     if (index > -1) {
         list.splice(index, 1);
     }
+}
+
+export function editItem(list: EntityModel[], item: EntityModel) {
+    const index = list.findIndex(i => i.id === item.id);
+    list[index] = item;
 }

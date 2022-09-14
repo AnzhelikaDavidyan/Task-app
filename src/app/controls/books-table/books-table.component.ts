@@ -11,7 +11,7 @@ import {DataService} from "../services/data.service";
 import {EntityModel} from "../model/entity.model";
 import {BROADCAST_SERVICE} from "../../app.token";
 import {BroadcastService} from "../services/broadcast.service";
-import {ActionEnum} from "../util/action.enum";
+import {ChannelEnum} from "../util/channel.enum";
 
 @Component({
     selector: 'app-books-table',
@@ -48,7 +48,7 @@ export class BooksTableComponent implements OnInit {
     }
 
     private listenDeleteAction(): void {
-        this.broadCastService.messagesOfType(ActionEnum.DELETE)
+        this.broadCastService.messagesOfType(ChannelEnum.DELETE)
             .pipe(takeUntil(this.destroy$))
             .subscribe((message) => {
                 removeItemFromList(this.list, message.payload);
@@ -100,7 +100,7 @@ export class BooksTableComponent implements OnInit {
         removeItemFromList(context.list, model);
         context.list = context.list.slice();
         context.broadCastService.publish({
-            type: ActionEnum.DELETE,
+            type: ChannelEnum.DELETE,
             payload: model
         });
         context.dataService.deleteItem(url, model, isWithRelatedData, relatedData)

@@ -1,6 +1,7 @@
 import {
     Component,
-    EventEmitter, Inject,
+    EventEmitter,
+    Inject,
     Input,
     OnChanges,
     OnDestroy,
@@ -13,7 +14,7 @@ import {MatTable, MatTableDataSource} from "@angular/material/table";
 import {MatPaginator} from "@angular/material/paginator";
 import {MatSort} from "@angular/material/sort";
 import {DataCommunicationModel, DataCommunicationService} from "../../services/data-communication.service";
-import {ColumnModel} from "../util/table.util";
+import {ColumnModel, editItem, removeItemFromList} from "../util/table.util";
 import {TypeEnum} from "../enum/type.enum";
 import {MaterialModule} from "../../../material.module";
 import {CommonModule} from "@angular/common";
@@ -24,8 +25,7 @@ import {Subject, takeUntil} from "rxjs";
 import {MatSnackBar} from "@angular/material/snack-bar";
 import {BROADCAST_SERVICE} from "../../../app.token";
 import {BroadcastService} from "../../services/broadcast.service";
-import {Action} from "rxjs/internal/scheduler/Action";
-import {ActionEnum} from "../../util/action.enum";
+import {ChannelEnum} from "../../util/channel.enum";
 
 @Component({
     standalone: true,
@@ -77,61 +77,59 @@ export class TableComponent implements OnInit, OnChanges, OnDestroy {
         }
     }
 
-    private listenCreateAction(): void {
-        this.broadCastService.messagesOfType(ActionEnum.CREATE)
+    private listenCreateAction(type: ChannelEnum): void {
+        this.broadCastService.messagesOfType(type)
             .pipe(takeUntil(this.destroy$))
             .subscribe((message) => {
-                this.list.push(message.payload);
+                this.list.push(message.payload as EntityModel);
                 this.dataSource._updateChangeSubscription();
             });
     }
 
-    private listenEditAction(): void {
-        this.broadCastService.messagesOfType(ActionEnum.EDIT)
+    private listenEditAction(type: ChannelEnum): void {
+        this.broadCastService.messagesOfType(type)
             .pipe(takeUntil(this.destroy$))
             .subscribe((message) => {
-                const index = this.list.findIndex(item => item.id === message.payload.id);
-                this.list[index] = message.payload;
+                editItem(this.list, message.payload as EntityModel);
                 this.dataSource._updateChangeSubscription();
             });
     }
 
-    private listenDeleteAction(): void {
-        this.broadCastService.messagesOfType(ActionEnum.DELETE)
+    private listenDeleteAction(type: ChannelEnum): void {
+        this.broadCastService.messagesOfType(type)
             .pipe(takeUntil(this.destroy$))
             .subscribe((message) => {
-                const index = this.list.findIndex(item => item.id === message.payload.id);
-                index > -1 ? this.list.splice(index) : null;
+                removeItemFromList(this.list, message.payload as EntityModel);
                 this.dataSource._updateChangeSubscription();
             });
     }
 
     ngOnInit(): void {
-        this.listenCreateAction();
-        this.listenEditAction();
-        this.listenDeleteAction();
-        // this.dataCommunicationService?.getNotifier().pipe(takeUntil(this.destroy$))
-        //     .subscribe(
-        //         {
-        //             next: (res: DataCommunicationModel) => {
-        //                 if (res.isDeleted || res.isCreated || res.isEdited) {
-        //                     if (res.isCreated) {
-        //                         this.list.push(res.model);
-        //                         this.openSnackBar('Data has been successfully added.');
-        //                     }
-        //                     if (res.isEdited) {
-        //                         const index = this.list.findIndex(item => item.id === res.model.id);
-        //                         this.list[index] = res.model;
-        //                         this.openSnackBar('Data has been successfully edited.');
-        //                     }
-        //                     if (res.isDeleted) {
-        //                         this.openSnackBar('Data has been successfully deleted.');
-        //                     }
-        //                     this.dataSource._updateChangeSubscription();
-        //                 }
-        //             }
-        //         }
-        //     )
+        this.listenCreateAction(ChannelEnum.CREATE);
+        this.listenEditAction(ChannelEnum.EDIT);
+        this.listenDeleteAction(ChannelEnum.DELETE);
+        this.dataCommunicationService?.getNotifier().pipe(takeUntil(this.destroy$))
+            .subscribe(
+                {
+                    next: (res: DataCommunicationModel) => {
+                        if (res.isDeleted || res.isCreated || res.isEdited) {
+                            if (res.isCreated) {
+                                this.list.push(res.model);
+                                this.openSnackBar('Data has been successfully added.');
+                            }
+                            if (res.isEdited) {
+                                const index = this.list.findIndex(item => item.id === res.model.id);
+                                this.list[index] = res.model;
+                                this.openSnackBar('Data has been successfully edited.');
+                            }
+                            if (res.isDeleted) {
+                                this.openSnackBar('Data has been successfully deleted.');
+                            }
+                            this.dataSource._updateChangeSubscription();
+                        }
+                    }
+                }
+            )
     }
 
     private openSnackBar(message: string) {

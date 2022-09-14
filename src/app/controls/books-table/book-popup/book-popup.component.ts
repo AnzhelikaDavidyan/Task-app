@@ -13,9 +13,9 @@ import {MatOptionSelectionChange} from "@angular/material/core";
 import {includeNCharacter, isPositive} from "../../shared/util/validators.util";
 import {DataService} from "../../services/data.service";
 import {EntityModel} from "../../model/entity.model";
-import {ActionEnum} from "../../util/action.enum";
 import {BROADCAST_SERVICE} from "../../../app.token";
 import {BroadcastService} from "../../services/broadcast.service";
+import {ChannelEnum} from "../../util/channel.enum";
 
 @Component({
     selector: 'app-book-popup',
@@ -50,7 +50,7 @@ export class BookPopupComponent implements OnInit {
         this.genres$ = this.dataService.getList(GENRES_URL) as Observable<GenreModel[]>;
     }
 
-    private publish(type: ActionEnum, model: BookModel) {
+    private publish(type: ChannelEnum, model: BookModel) {
         this.broadCastService.publish({
             type: type,
             payload: model
@@ -81,7 +81,7 @@ export class BookPopupComponent implements OnInit {
                     next: () => {
                         const book = new BookModel(model.id, model.title, model.description, model.genreId,
                             model.publishedYear, model.authorId);
-                        this.publish(ActionEnum.CREATE, book);
+                        this.publish(ChannelEnum.CREATE, book);
                         this.dataCommunicationService.notify({
                             model: book,
                             isCreated: true,
@@ -93,7 +93,7 @@ export class BookPopupComponent implements OnInit {
             } else {
                 this.onEdit(model).subscribe({
                     next: () => {
-                        this.publish(ActionEnum.EDIT, model);
+                        this.publish(ChannelEnum.EDIT, model);
                         this.dataCommunicationService.notify({
                             model,
                             isCreated: false,

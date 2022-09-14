@@ -2,11 +2,11 @@ import {Observable, Subject} from 'rxjs';
 import {filter} from 'rxjs/operators';
 import {NgZone} from "@angular/core";
 import {runInZone} from "../util/run-in-zone";
-import {ActionEnum} from "../util/action.enum";
 import {EntityModel} from "../model/entity.model";
+import {ChannelEnum} from "../util/channel.enum";
 
 interface BroadcastMessage {
-    type: ActionEnum;
+    type: ChannelEnum;
     payload: EntityModel;
 }
 
@@ -23,7 +23,7 @@ export class BroadcastService {
         this.broadcastChannel.postMessage(message);
     }
 
-    messagesOfType(type: ActionEnum): Observable<BroadcastMessage> {
+    messagesOfType(type: ChannelEnum): Observable<BroadcastMessage> {
         return this.onMessage.pipe(
             // It is important that we are running in the NgZone. This will make sure that Angular
             // component changes are immediately visible in the browser when they

@@ -1,4 +1,4 @@
-export enum ActionEnum {
+export enum ChannelEnum{
     CREATE,
     EDIT,
     DELETE
