@@ -10,7 +10,6 @@ import {GenreModel} from "../../genres-table/model/genre.model";
 import {AUTHORS_URL, GENRES_URL} from "../../util/url";
 import {MatOptionSelectionChange} from "@angular/material/core";
 import {DataService} from "../../services/data.service";
-import {EntityModel} from "../../model/entity.model";
 import {BROADCAST_SERVICE} from "../../../app.token";
 import {BroadcastService} from "../../services/broadcast.service";
 import {ChannelEnum} from "../../util/channel.enum";
@@ -33,12 +32,10 @@ export class AuthorPopupComponent implements OnInit {
                 private dataCommunicationService: DataCommunicationService,
                 public dialogRef: MatDialogRef<DeletePopupComponent>,
                 @Inject(MAT_DIALOG_DATA) public data: {
-                    model: AuthorModel,
-                    list: EntityModel[],
                     isNew: boolean,
-                    title: string,
-                    saveAction: Function,
-                    saveArgs: any[],
+                    model: AuthorModel,
+                    list: AuthorModel[],
+                    title: string
                 },
                 @Inject(BROADCAST_SERVICE) private broadCastService: BroadcastService) {
         this.authorModel = this.data.model;
@@ -49,14 +46,15 @@ export class AuthorPopupComponent implements OnInit {
         this.genres$ = this.dataService.getList(GENRES_URL) as Observable<GenreModel[]>;
     }
 
-    private initForm(model?: AuthorModel): void {
+    private initForm(model: AuthorModel): void {
         this.formGroup = this.formBuilder.group({
-            id: new FormControl(model ? model.id : ''),
-            firstName: new FormControl(model ? model.firstName : '', [Validators.required,
+            id: new FormControl(model ? model.id : null),
+            firstName: new FormControl(model ? model.firstName : null, [Validators.required,
                 Validators.maxLength(50)]),
-            lastName: new FormControl(model ? model.lastName : '', [Validators.required,
+            lastName: new FormControl(model ? model.lastName : null, [Validators.required,
                 Validators.maxLength(50)]),
-            genreId: new FormControl(model ? model.genreId : '', Validators.required),
+            genreId: new FormControl({value: (model ? model.genreId : null), disabled: !this.data.isNew},
+                Validators.required),
         });
         this.genreId = this.formGroup.get('genreId') as FormControl;
     }
@@ -82,7 +80,8 @@ export class AuthorPopupComponent implements OnInit {
                             isEdited: false,
                             isDeleted: false
                         });
-                    }
+                    },
+                    error: console.error
                 })
             } else {
                 this.onEdit(model).subscribe({
@@ -94,7 +93,8 @@ export class AuthorPopupComponent implements OnInit {
                             isEdited: true,
                             isDeleted: false
                         });
-                    }
+                    },
+                    error: console.error
                 });
             }
         }

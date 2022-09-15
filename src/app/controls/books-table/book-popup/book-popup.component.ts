@@ -38,7 +38,10 @@ export class BookPopupComponent implements OnInit {
                 private dataCommunicationService: DataCommunicationService,
                 public dialogRef: MatDialogRef<DeletePopupComponent>,
                 @Inject(MAT_DIALOG_DATA) public data: {
-                    model: BookModel, list: BookModel[], isNew: boolean, title: string
+                    model: BookModel,
+                    list: BookModel[],
+                    isNew: boolean,
+                    title: string
                 },
                 @Inject(BROADCAST_SERVICE) private broadCastService: BroadcastService) {
         this.bookModel = this.data.model;
@@ -59,15 +62,15 @@ export class BookPopupComponent implements OnInit {
 
     private initForm(model?: BookModel): void {
         this.formGroup = this.formBuilder.group({
-            id: new FormControl(model ? model.id : ''),
-            title: new FormControl(model ? model.title : '', [Validators.required,
+            id: new FormControl(model ? model.id : null),
+            title: new FormControl(model ? model.title : null, [Validators.required,
                 Validators.maxLength(50)]),
-            description: new FormControl(model ? model.description : '',
+            description: new FormControl(model ? model.description : null,
                 [Validators.maxLength(100)]),
-            publishedYear: new FormControl(model ? model.publishedYear : '',
+            publishedYear: new FormControl(model ? model.publishedYear : null,
                 [Validators.minLength(4), isPositive, includeNCharacter(4)]),
-            genreId: new FormControl(model ? model.genreId : '', Validators.required),
-            authorId: new FormControl(model ? model.authorId : '', Validators.required)
+            genreId: new FormControl(model ? model.genreId : null, Validators.required),
+            authorId: new FormControl(model ? model.authorId : null, Validators.required)
         });
         this.genreId = this.formGroup.get('genreId') as FormControl;
         this.authorId = this.formGroup.get('authorId') as FormControl;
@@ -88,7 +91,8 @@ export class BookPopupComponent implements OnInit {
                             isEdited: false,
                             isDeleted: false
                         });
-                    }
+                    },
+                    error: console.error
                 })
             } else {
                 this.onEdit(model).subscribe({
@@ -100,7 +104,8 @@ export class BookPopupComponent implements OnInit {
                             isEdited: true,
                             isDeleted: false
                         });
-                    }
+                    },
+                    error: console.error
                 });
             }
         }

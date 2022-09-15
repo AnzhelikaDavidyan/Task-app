@@ -1,5 +1,5 @@
 import {Component, Inject, OnInit} from '@angular/core';
-import {Subject, takeUntil} from "rxjs";
+import {noop, Subject, takeUntil} from "rxjs";
 import {AuthorModel} from "./model/author.model";
 import {
     ColumnModel,
@@ -57,12 +57,13 @@ export class AuthorsTableComponent implements OnInit {
         ).subscribe({
             next: (authors: EntityModel[]) => {
                 this.list = authors as AuthorModel[];
-            }
+            },
+            error: console.error
         });
     }
 
     private notifyData(): void {
-        this.dataCommunicationService.getNotifier().pipe(takeUntil(this.destroy$))
+        this.dataCommunicationService.getNotifier()
             .subscribe({
                 next: (res: DataCommunicationModel) => {
                     if (res.isCreated) {
@@ -77,14 +78,13 @@ export class AuthorsTableComponent implements OnInit {
                         this.openSnackBar('Data has been successfully deleted.');
                     }
                     this.list = this.list.slice();
-
-                }
+                },
+                error: console.error
             });
     }
 
     private listenDeleteAction(type: ChannelEnum): void {
         this.broadCastService.messagesOfType(type)
-            .pipe(takeUntil(this.destroy$))
             .subscribe((message) => {
                 removeItemFromList(this.list, message.payload as AuthorModel);
                 this.list = this.list.slice();
@@ -93,7 +93,6 @@ export class AuthorsTableComponent implements OnInit {
 
     private listenCreateAction(type: ChannelEnum): void {
         this.broadCastService.messagesOfType(type)
-            .pipe(takeUntil(this.destroy$))
             .subscribe((message) => {
                 this.list.push(message.payload as AuthorModel);
                 this.list = this.list.slice();
@@ -102,7 +101,6 @@ export class AuthorsTableComponent implements OnInit {
 
     private listenEditAction(type: ChannelEnum): void {
         this.broadCastService.messagesOfType(type)
-            .pipe(takeUntil(this.destroy$))
             .subscribe((message) => {
                 editItem(this.list, message.payload as AuthorModel);
                 this.list = this.list.slice();
@@ -121,18 +119,13 @@ export class AuthorsTableComponent implements OnInit {
                 isNew: true,
                 list: this.list,
                 title: 'Add Author',
-                saveAction: this.onSave,
-                saveArgs: []
-            },
+                model: null,
+            } as PopupInfo,
             disableClose: true,
             autoFocus: false,
             width: '400px',
             height: 'auto'
         });
-    }
-
-    private onSave() {
-
     }
 
     public delete(model: EntityModel): void {
@@ -158,13 +151,16 @@ export class AuthorsTableComponent implements OnInit {
             payload: model
         });
         context.dataService.deleteItem(url, model, isWithRelatedData, relatedData)
-            .subscribe()
+            .subscribe({
+                next: noop, error: console.error
+            })
     }
 
     public edit([event, model]: [MouseEvent, EntityModel]): void {
         this.dialog.open(AuthorPopupComponent, {
             data: {
-                model,
+                isNew: false,
+                model: model as AuthorModel,
                 list: this.list,
                 title: 'Edit Author',
             } as PopupInfo,

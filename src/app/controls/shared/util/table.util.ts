@@ -12,11 +12,9 @@ export class ColumnModel {
 
 export interface PopupInfo {
     isNew: boolean;
+    model: EntityModel | null;
+    list: EntityModel[];
     title: string;
-    message: string;
-    model: any;
-    list: any[];
-
 }
 
 export interface RelatedDataI {

@@ -1,6 +1,6 @@
 import {Component, Inject, OnInit} from '@angular/core';
 import {MatDialog} from '@angular/material/dialog';
-import {Subject, takeUntil} from 'rxjs';
+import {noop, Subject, takeUntil} from 'rxjs';
 import {DeletePopupComponent, DeletePopupI} from '../shared/delete-popup/delete-popup.component';
 import {BookPopupComponent} from './book-popup/book-popup.component';
 import {BookModel} from './model/book.model';
@@ -57,7 +57,8 @@ export class BooksTableComponent implements OnInit {
         ).subscribe({
             next: (books: EntityModel[]) => {
                 this.list = books as BookModel[];
-            }
+            },
+            error: console.error
         });
     }
 
@@ -68,7 +69,7 @@ export class BooksTableComponent implements OnInit {
     }
 
     private notifyData(): void {
-        this.dataCommunicationService.getNotifier().pipe(takeUntil(this.destroy$))
+        this.dataCommunicationService.getNotifier()
             .subscribe({
                 next: (res: DataCommunicationModel) => {
                     if (res.isCreated) {
@@ -84,34 +85,41 @@ export class BooksTableComponent implements OnInit {
                     }
                     this.list = this.list.slice();
 
-                }
+                },
+                error: console.error
             });
     }
 
     private listenDeleteAction(type: ChannelEnum): void {
         this.broadCastService.messagesOfType(type)
-            .pipe(takeUntil(this.destroy$))
-            .subscribe((message) => {
-                removeItemFromList(this.list, message.payload as BookModel);
-                this.list = this.list.slice();
+            .subscribe({
+                next: (message) => {
+                    removeItemFromList(this.list, message.payload as BookModel);
+                    this.list = this.list.slice();
+                },
+                error: console.error
             });
     }
 
     private listenCreateAction(type: ChannelEnum): void {
         this.broadCastService.messagesOfType(type)
-            .pipe(takeUntil(this.destroy$))
-            .subscribe((message) => {
-                this.list.push(message.payload as BookModel);
-                this.list = this.list.slice();
+            .subscribe({
+                next: (message) => {
+                    this.list.push(message.payload as BookModel);
+                    this.list = this.list.slice();
+                },
+                error: console.error
             });
     }
 
     private listenEditAction(type: ChannelEnum): void {
         this.broadCastService.messagesOfType(type)
-            .pipe(takeUntil(this.destroy$))
-            .subscribe((message) => {
-                editItem(this.list, message.payload as BookModel);
-                this.list = this.list.slice();
+            .subscribe({
+                next: (message) => {
+                    editItem(this.list, message.payload as BookModel);
+                    this.list = this.list.slice();
+                },
+                error: console.error
             });
     }
 
@@ -120,7 +128,8 @@ export class BooksTableComponent implements OnInit {
             data: {
                 isNew: true,
                 list: this.list,
-                title: 'Add Book'
+                title: 'Add Book',
+                model: null
             } as PopupInfo,
             disableClose: true,
             autoFocus: false,
@@ -135,6 +144,7 @@ export class BooksTableComponent implements OnInit {
                 title: 'Edit Book',
                 list: this.list,
                 model,
+                isNew: false
             } as PopupInfo,
             disableClose: true,
             autoFocus: false,
@@ -163,7 +173,10 @@ export class BooksTableComponent implements OnInit {
             payload: model
         });
         context.dataService.deleteItem(url, model, isWithRelatedData, relatedData)
-            .subscribe()
+            .subscribe({
+                next: noop,
+                error: console.error
+            })
     }
 
     public ngOnDestroy(): void {

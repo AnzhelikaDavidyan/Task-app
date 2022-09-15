@@ -20,8 +20,11 @@ export function includeNCharacter(n: number) {
 
 export function duplicate(list: any[], name: string = 'name') {
     return (control: AbstractControl): ValidationErrors | null => {
-        const value = control.value.trim();
-        const index = list.findIndex(item => item[name] === value);
-        return index > -1 ? {duplicate: true} : null;
+        const value = control.value?.trim();
+        if (value) {
+            const index = list.findIndex(item => item[name] === value);
+            return index > -1 ? {duplicate: true} : null;
+        }
+        return null;
     }
 }

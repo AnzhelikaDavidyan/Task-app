@@ -29,8 +29,10 @@ export class GenrePopupComponent implements OnInit {
                 private dataCommunicationService: DataCommunicationService,
                 public dialogRef: MatDialogRef<DeletePopupComponent>,
                 @Inject(MAT_DIALOG_DATA) public data: {
-                    model: GenreModel, list: GenreModel[], isNew: boolean, title: string,
-                    genres: GenreModel[]
+                    isNew: boolean,
+                    model: GenreModel,
+                    list: GenreModel[],
+                    title: string,
                 },
                 @Inject(BROADCAST_SERVICE) private broadCastService: BroadcastService) {
         this.genreModel = this.data.model;
@@ -42,8 +44,8 @@ export class GenrePopupComponent implements OnInit {
 
     private initForm(model?: GenreModel): void {
         this.formGroup = this.formBuilder.group({
-            id: new FormControl(model ? model.id : ''),
-            name: new FormControl(model ? model.name : '', [Validators.required,
+            id: new FormControl(model ? model.id : null),
+            name: new FormControl(model ? model.name : null, [Validators.required,
                 Validators.maxLength(50), duplicate(this.data.list)]),
         });
     }

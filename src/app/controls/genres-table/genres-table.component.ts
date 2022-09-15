@@ -1,5 +1,5 @@
 import {Component, Inject, OnInit, ViewChild} from '@angular/core';
-import {Subject, takeUntil} from "rxjs";
+import {noop, Subject, takeUntil} from "rxjs";
 import {MatTable} from "@angular/material/table";
 import {GenreModel} from "./model/genre.model";
 import {MatDialog} from "@angular/material/dialog";
@@ -56,12 +56,13 @@ export class GenresTableComponent implements OnInit {
             .subscribe({
                 next: (genres: EntityModel[]) => {
                     this.list = genres as GenreModel[];
-                }
+                },
+                error: console.error
             });
     }
 
     private notifyData(): void {
-        this.dataCommunicationService.getNotifier().pipe(takeUntil(this.destroy$))
+        this.dataCommunicationService.getNotifier()
             .subscribe({
                 next: (res: DataCommunicationModel) => {
                     if (res.isCreated) {
@@ -76,35 +77,41 @@ export class GenresTableComponent implements OnInit {
                         this.openSnackBar('Data has been successfully deleted.');
                     }
                     this.list = this.list.slice();
-
-                }
+                },
+                error: console.error
             });
     }
 
     private listenCreateAction(type: ChannelEnum): void {
         this.broadCastService.messagesOfType(type)
-            .pipe(takeUntil(this.destroy$))
-            .subscribe((message) => {
-                this.list.push(message.payload as GenreModel);
-                this.list = this.list.slice();
+            .subscribe({
+                next: (message) => {
+                    this.list.push(message.payload as GenreModel);
+                    this.list = this.list.slice();
+                },
+                error: console.error
             });
     }
 
     private listenDeleteAction(type: ChannelEnum): void {
         this.broadCastService.messagesOfType(type)
-            .pipe(takeUntil(this.destroy$))
-            .subscribe((message) => {
-                removeItemFromList(this.list, message.payload);
-                this.list = this.list.slice();
+            .subscribe({
+                next: (message) => {
+                    removeItemFromList(this.list, message.payload);
+                    this.list = this.list.slice();
+                },
+                error: console.error
             });
     }
 
     private listenEditAction(type: ChannelEnum): void {
         this.broadCastService.messagesOfType(type)
-            .pipe(takeUntil(this.destroy$))
-            .subscribe((message) => {
-                editItem(this.list, message.payload as EntityModel);
-                this.list = this.list.slice();
+            .subscribe({
+                next: (message) => {
+                    editItem(this.list, message.payload as EntityModel);
+                    this.list = this.list.slice();
+                },
+                error: console.error
             });
     }
 
@@ -119,7 +126,8 @@ export class GenresTableComponent implements OnInit {
             data: {
                 isNew: true,
                 list: this.list,
-                title: 'Add Genre'
+                title: 'Add Genre',
+                model: null,
             } as PopupInfo,
             disableClose: true,
             autoFocus: false,
@@ -152,7 +160,10 @@ export class GenresTableComponent implements OnInit {
             payload: model
         });
         context.dataService.deleteItem(url, model, isWithRelatedData, relatedData)
-            .subscribe()
+            .subscribe({
+                next: noop,
+                error: console.error
+            })
     }
 
 
@@ -162,6 +173,7 @@ export class GenresTableComponent implements OnInit {
                 model,
                 list: this.list,
                 title: 'Edit Genre',
+                isNew: false
             } as PopupInfo,
             disableClose: true,
             autoFocus: false,
